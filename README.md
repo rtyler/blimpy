@@ -1,29 +1,9 @@
 # Blimpy
 
-TODO: Write a gem description
 
-## Installation
+Notes and other bits are being stored in [this public Evernote
+notebook](https://www.evernote.com/pub/agentdero/blimpy).
 
-Add this line to your application's Gemfile:
+The current concept/design document is captured in [this
+note](https://www.evernote.com/pub/agentdero/blimpy#b=58a228bb-8910-4cd1-a7f5-995d775b81a2&n=06def701-7e25-425b-81d4-5811e7987c7e)
 
-    gem 'blimpy'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install blimpy
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
