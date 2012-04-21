@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["tyler@monkeypox.org"]
   gem.description   = %q{TODO: Write a gem description}
   gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/rtyler/blimpy"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "blimpy"
   gem.require_paths = ["lib"]
   gem.version       = Blimpy::VERSION
+
+  gem.add_dependency 'fog'
 end
