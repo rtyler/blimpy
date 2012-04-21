@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+puts 'Please create a Blimpfile in your current directory'
+exit 1

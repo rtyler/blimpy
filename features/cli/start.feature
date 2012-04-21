@@ -8,3 +8,10 @@ Feature: Start a VM or cluster of VMs in the cloud
       Please create a Blimpfile in your current directory
       """
     And the exit status should be 1
+
+  Scenario: With a simple Blimpfile
+    Given I have the Blimpfile:
+      """
+      """
+    When I run `blimpy start`
+    Then the exit status should be 0
