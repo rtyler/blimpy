@@ -1,5 +1,14 @@
-require "blimpy/version"
+require 'blimpy/box'
+require 'blimpy/engine'
+require 'blimpy/fleet'
+require 'blimpy/version'
 
 module Blimpy
-  # Your code goes here...
+  def self.fleet
+  end
+
+  class InvalidBlimpFileError < Exception
+  end
+  class InvalidRegionError < Exception
+  end
 end
