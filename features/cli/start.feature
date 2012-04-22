@@ -9,9 +9,19 @@ Feature: Start a VM or cluster of VMs in the cloud
       """
     And the exit status should be 1
 
-    #Scenario: With a simple Blimpfile
-    #  Given I have the Blimpfile:
-    #    """
-    #    """
-    #  When I run `blimpy start`
-    #  Then the exit status should be 0
+    Scenario: With a simple Blimpfile
+      Given I have the Blimpfile:
+        """
+        Blimpy.fleet do |f|
+          f.add do |host|
+            host.group = 'Simple'
+            host.name = 'Cucumber Host'
+          end
+        end
+        """
+      When I run `blimpy start`
+      Then the exit status should be 0
+      And the output should contain:
+        """
+        Up, up and away!
+        """
