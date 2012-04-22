@@ -5,8 +5,8 @@ module Blimpy
     attr_accessor :image_id, :livery, :group, :name
 
     def initialize
-      @allowed_regions = [:uswest, :useast]
-      @region = :uswest # Default to US West for now
+      @allowed_regions = ['us-west-1', 'us-west-2', 'us-east-1']
+      @region = 'us-west-2' # Default to US West (Oregon) for now
       @image_id = 'ami-349b495d' # Default to Ubuntu 10.04 LTS (64bit)
       @livery = nil
       @group = nil

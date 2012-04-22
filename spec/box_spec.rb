@@ -36,7 +36,7 @@ describe Blimpy::Box do
 
   describe '#region' do
     it 'should return the default region' do
-      subject.region.should == :uswest
+      subject.region.should == 'us-west-2'
     end
   end
 
@@ -48,8 +48,8 @@ describe Blimpy::Box do
     end
 
     it 'should change the value of @region' do
-      subject.region = :useast
-      subject.region.should == :useast
+      subject.region = 'us-east-1'
+      subject.region.should == 'us-east-1'
     end
   end
 end

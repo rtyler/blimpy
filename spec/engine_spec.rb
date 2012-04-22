@@ -36,7 +36,7 @@ describe Blimpy::Engine do
               host.image_id = 'ami-349b495d'
               host.livery = 'rails'
               host.group = 'Simple'
-              host.region = :uswest
+              host.region = 'us-west-1'
               host.name = 'Rails App Server'
             end
           end
