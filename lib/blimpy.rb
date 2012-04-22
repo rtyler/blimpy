@@ -4,7 +4,13 @@ require 'blimpy/fleet'
 require 'blimpy/version'
 
 module Blimpy
-  def self.fleet
+  def self.fleet(&block)
+    if block.nil?
+      return false
+    end
+    fleet = Blimpy::Fleet.new
+    block.call fleet
+    fleet
   end
 
   class InvalidBlimpFileError < Exception

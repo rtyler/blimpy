@@ -36,7 +36,7 @@ describe Blimpy::Engine do
               host.image_id = 'ami-349b495d'
               host.livery = 'rails'
               host.group = 'Simple'
-              host.region = :uswest1
+              host.region = :uswest
               host.name = 'Rails App Server'
             end
           end
@@ -44,7 +44,14 @@ describe Blimpy::Engine do
       end
 
       it 'should create the appropriate Fleet object' do
-        pending 'Requires Blimpy#fleet to work'
+        result = subject.load_file(content)
+        result.should be_instance_of Blimpy::Fleet
+        result.hosts.should be_instance_of Array
+        result.hosts.size.should == 1
+
+        host = result.hosts.first
+        host.group.should == 'Simple'
+        host.name.should == 'Rails App Server'
       end
     end
   end
