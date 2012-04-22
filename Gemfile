@@ -9,4 +9,5 @@ group :development do
   gem 'cucumber'
   gem 'aruba'
   gem 'tempdir'
+  gem 'pry'
 end
