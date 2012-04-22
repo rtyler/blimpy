@@ -20,5 +20,10 @@ module Blimpy
       @region = newRegion
     end
 
+    def validate!
+      if Fog::Compute[:aws].security_groups.get(@group).nil?
+        raise BoxValidationError
+      end
+    end
   end
 end

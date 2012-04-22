@@ -52,4 +52,38 @@ describe Blimpy::Box do
       subject.region.should == 'us-east-1'
     end
   end
+
+  describe '#validate!' do
+    let(:security_group) do
+      group = double('Fog::Compute::AWS::SecurityGroup')
+      group.stub(:name).and_return('MockedGroup')
+      group
+    end
+    let(:groups) { double('Fog::Compute::AWS::SecurityGroups') }
+
+    before :each do
+      # Fog::Compute[:aws] will return a *new* instance of
+      # Fog::Compute::Aws::Real every time (apparently) it is invoked
+      Fog::Compute::AWS::Real.any_instance.should_receive(:security_groups).and_return(groups)
+    end
+
+    context 'with invalid settings' do
+      it 'should raise with a bad security group' do
+        groups.should_receive(:get).and_return(nil)
+        expect {
+          subject.validate!
+        }.to raise_error(Blimpy::BoxValidationError)
+      end
+    end
+
+    context 'with valid settings' do
+      it 'should validate with a good security group' do
+        groups.should_receive(:get).with('MockedGroup').and_return(security_group)
+        expect {
+          subject.group = 'MockedGroup'
+          subject.validate!
+        }.not_to raise_error(Blimpy::BoxValidationError)
+      end
+    end
+  end
 end

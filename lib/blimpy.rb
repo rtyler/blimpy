@@ -17,4 +17,6 @@ module Blimpy
   end
   class InvalidRegionError < Exception
   end
+  class BoxValidationError < Exception
+  end
 end
