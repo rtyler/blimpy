@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+require 'rubygems'
+require 'thor'
+
 begin
   require 'blimpy'
 rescue LoadError
@@ -7,25 +10,37 @@ rescue LoadError
   require 'blimpy'
 end
 
-blimp_path = File.join(Dir.pwd, 'Blimpfile')
+module Blimpy
+  class CLI < Thor
+    BLIMPFILE = File.join(Dir.pwd, 'Blimpfile')
 
-unless File.exists? blimp_path
+    desc 'start', 'Start up a fleet of blimps'
+    method_options :"dry-run" => :boolean
+    def start
+      engine = Blimpy::Engine.new
+      engine.load_file(File.open(BLIMPFILE).read)
+      puts 'Up, up and away!'
+
+      if options[:'dry-run']
+        puts 'skipping actually starting the fleet'
+        exit 0
+      end
+
+      engine.fleet.start
+    end
+
+    desc 'list', 'List running blimps'
+    def list
+      puts 'No currently running VMs'
+    end
+  end
+end
+
+unless File.exists? Blimpy::CLI::BLIMPFILE
   puts 'Please create a Blimpfile in your current directory'
   exit 1
 end
 
-engine = Blimpy::Engine.new
-engine.load_file(File.open(blimp_path).read)
-
-# Actually start the stuff here
-puts 'Up, up and away!'
-
-
-if ARGV.include? '--dry-run'
-  puts 'skipping actually starting the fleet'
-  exit 0
-end
-
-engine.fleet.start
+Blimpy::CLI.start
 
 exit 0

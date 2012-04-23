@@ -16,4 +16,5 @@ Gem::Specification.new do |gem|
   gem.version       = Blimpy::VERSION
 
   gem.add_dependency 'fog'
+  gem.add_dependency 'thor'
 end
