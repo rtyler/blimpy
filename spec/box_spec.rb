@@ -109,6 +109,18 @@ describe Blimpy::Box do
       end
     end
 
+
+    describe '#stop' do
+      before :each do
+        server.should_receive(:stop)
+      end
+
+      subject { Blimpy::Box.new(server) }
+
+      it 'should stop the Box' do
+        subject.stop
+      end
+    end
     describe '#destroy' do
       before :each do
         server.should_receive(:destroy)
