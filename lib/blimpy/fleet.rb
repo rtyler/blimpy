@@ -5,6 +5,8 @@ module Blimpy
 
     def initialize
       @hosts = []
+      @servers = []
+      @id = Time.now.utc.to_i
     end
 
     def add(&block)
@@ -12,8 +14,33 @@ module Blimpy
         return false
       end
       box = Blimpy::Box.new
+      box.fleet_id = @id
       @hosts << box
       block.call(box)
+    end
+
+    def start
+      @hosts.each do |host|
+        @servers << host.start
+      end
+
+      @hosts.each do |host|
+        print ">> #{host.name} "
+        host.server.wait_for do
+          print '.'
+          ready?
+        end
+        print ".. online at: #{host.server.dns_name}"
+        puts
+      end
+    end
+
+    def stop
+      raise NotImplementedError
+    end
+
+    def destroy
+      raise NotImplementedError
     end
   end
 end

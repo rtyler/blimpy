@@ -19,7 +19,7 @@ Feature: Start a VM or cluster of VMs in the cloud
           end
         end
         """
-      When I run `blimpy start`
+      When I run `blimpy start --dry-run`
       Then the exit status should be 0
       And the output should contain:
         """

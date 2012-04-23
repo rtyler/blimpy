@@ -1,13 +1,31 @@
 #!/usr/bin/env ruby
 
-BLIMPFILE='Blimpfile'
+begin
+  require 'blimpy'
+rescue LoadError
+  $:.unshift File.expand_path(File.dirname(__FILE__) + '/../lib/')
+  require 'blimpy'
+end
 
-unless File.exists?(File.join(Dir.pwd, BLIMPFILE))
+blimp_path = File.join(Dir.pwd, 'Blimpfile')
+
+unless File.exists? blimp_path
   puts 'Please create a Blimpfile in your current directory'
   exit 1
 end
 
+engine = Blimpy::Engine.new
+engine.load_file(File.open(blimp_path).read)
+
 # Actually start the stuff here
 puts 'Up, up and away!'
+
+
+if ARGV.include? '--dry-run'
+  puts 'skipping actually starting the fleet'
+  exit 0
+end
+
+engine.fleet.start
 
 exit 0

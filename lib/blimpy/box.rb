@@ -1,8 +1,8 @@
 
 module Blimpy
   class Box
-    attr_reader :allowed_regions, :region
-    attr_accessor :image_id, :livery, :group, :name
+    attr_reader :allowed_regions, :region, :server
+    attr_accessor :image_id, :livery, :group, :name, :tags, :fleet_id
 
     def initialize
       @allowed_regions = ['us-west-1', 'us-west-2', 'us-east-1']
@@ -11,6 +11,10 @@ module Blimpy
       @livery = nil
       @group = nil
       @name = 'Unnamed Box'
+      @tags = {}
+      @instance_id = nil
+      @server = nil
+      @fleet_id = 0
     end
 
     def region=(newRegion)
@@ -24,6 +28,19 @@ module Blimpy
       if Fog::Compute[:aws].security_groups.get(@group).nil?
         raise BoxValidationError
       end
+    end
+
+    def start
+      tags = @tags.merge({:Name => @name, :CreatedBy => 'Blimpy', :BlimpyFleetId => @fleet_id})
+      @server = Fog::Compute[:aws].servers.create(:image_id => @image_id, :region => @region, :tags => tags)
+    end
+
+    def stop
+      raise NotImplementedError
+    end
+
+    def destroy
+      raise NotImplementedError
     end
   end
 end
