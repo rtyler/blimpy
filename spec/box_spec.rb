@@ -86,4 +86,50 @@ describe Blimpy::Box do
       end
     end
   end
+
+  describe '#start' do
+    let(:server_id) { 'id-0xdeadbeef' }
+    let(:server) do
+      server = double('Fog::Compute::AWS::Server')
+      server.stub(:id).and_return(server_id)
+      server
+    end
+    before :each do
+      # Mocking out #create_host so we don't actually create EC2 instance
+      Blimpy::Box.any_instance.should_receive(:create_host).and_return(server)
+      Blimpy::Box.any_instance.should_receive(:ensure_state_dir).and_return(true)
+    end
+
+    it 'should create a state file' do
+      path = File.join(subject.state_dir, "#{server_id}.blimp")
+      File.should_receive(:open).with(path, 'w')
+      subject.start
+    end
+  end
+
+  describe '#ensure_state_dir' do
+    let(:path) { File.join(Dir.pwd, '.blimpy.d') }
+
+    context 'if ./.blimpy.d does not exist' do
+      before :each do
+        File.should_receive(:exist?).with(path).and_return(false)
+      end
+
+      it 'should create directory' do
+        Dir.should_receive(:mkdir).with(path)
+        subject.ensure_state_dir
+      end
+    end
+
+    context 'if ./blimpy.d does exist' do
+      before :each do
+        File.should_receive(:exist?).with(path).and_return(true)
+      end
+
+      it 'should create directory' do
+        Dir.should_receive(:mkdir).with(path).never
+        subject.ensure_state_dir
+      end
+    end
+  end
 end

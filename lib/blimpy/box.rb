@@ -31,16 +31,48 @@ module Blimpy
     end
 
     def start
-      tags = @tags.merge({:Name => @name, :CreatedBy => 'Blimpy', :BlimpyFleetId => @fleet_id})
-      @server = Fog::Compute[:aws].servers.create(:image_id => @image_id, :region => @region, :tags => tags)
+      ensure_state_dir
+      @server = create_host
+
+      File.open(File.join(state_dir, state_file), 'w') do |f|
+        f.write("#{@name}\n")
+      end
     end
 
     def stop
-      raise NotImplementedError
+      unless @server.nil?
+        @server.stop
+      end
     end
 
     def destroy
-      raise NotImplementedError
+      unless @server.nil?
+        @server.destroy
+      end
+    end
+
+    def state_dir
+      File.join(Dir.pwd, '.blimpy.d')
+    end
+
+    def state_file
+      if @server.nil?
+        raise Exception, "I can't make a state file without a @server!"
+      end
+      "#{@server.id}.blimp"
+    end
+
+    def ensure_state_dir
+      unless File.exist? state_dir
+        Dir.mkdir(state_dir)
+      end
+    end
+
+    private
+
+    def create_host
+      tags = @tags.merge({:Name => @name, :CreatedBy => 'Blimpy', :BlimpyFleetId => @fleet_id})
+      Fog::Compute[:aws].servers.create(:image_id => @image_id, :region => @region, :tags => tags)
     end
   end
 end
