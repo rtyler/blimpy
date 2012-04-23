@@ -17,9 +17,13 @@ module Blimpy
 
       begin
         @fleet = eval(file_content)
+        if @fleet and !(@fleet.instance_of? Blimpy::Fleet)
+          raise Exception, 'File does not create a Fleet'
+        end
       rescue Exception => e
         raise InvalidBlimpFileError, e.to_s
       end
+      @fleet
     end
   end
 end
