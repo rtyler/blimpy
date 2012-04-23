@@ -4,7 +4,15 @@ module Blimpy
     attr_reader :allowed_regions, :region, :server
     attr_accessor :image_id, :livery, :group, :name, :tags, :fleet_id
 
-    def initialize
+    def self.from_instance_id(an_id)
+      server = Fog::Compute[:aws].servers.get(an_id)
+      if server.nil?
+        return nil
+      end
+      self.new(server)
+    end
+
+    def initialize(server=nil)
       @allowed_regions = ['us-west-1', 'us-west-2', 'us-east-1']
       @region = 'us-west-2' # Default to US West (Oregon) for now
       @image_id = 'ami-349b495d' # Default to Ubuntu 10.04 LTS (64bit)
@@ -12,8 +20,7 @@ module Blimpy
       @group = nil
       @name = 'Unnamed Box'
       @tags = {}
-      @instance_id = nil
-      @server = nil
+      @server = server
       @fleet_id = 0
     end
 
@@ -30,12 +37,18 @@ module Blimpy
       end
     end
 
+    def online!
+      File.open(File.join(state_dir, state_file), 'a') do |f|
+        f.write("dns: #{@server.dns_name}\n")
+      end
+    end
+
     def start
       ensure_state_dir
       @server = create_host
 
       File.open(File.join(state_dir, state_file), 'w') do |f|
-        f.write("#{@name}\n")
+        f.write("name: #{@name}\n")
       end
     end
 
@@ -48,6 +61,7 @@ module Blimpy
     def destroy
       unless @server.nil?
         @server.destroy
+        File.unlink(File.join(state_dir, state_file))
       end
     end
 

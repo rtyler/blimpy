@@ -87,23 +87,39 @@ describe Blimpy::Box do
     end
   end
 
-  describe '#start' do
+  context 'with a mocked server' do
     let(:server_id) { 'id-0xdeadbeef' }
     let(:server) do
       server = double('Fog::Compute::AWS::Server')
       server.stub(:id).and_return(server_id)
       server
     end
-    before :each do
-      # Mocking out #create_host so we don't actually create EC2 instance
-      Blimpy::Box.any_instance.should_receive(:create_host).and_return(server)
-      Blimpy::Box.any_instance.should_receive(:ensure_state_dir).and_return(true)
+
+    describe '#start' do
+      before :each do
+        # Mocking out #create_host so we don't actually create EC2 instance
+        Blimpy::Box.any_instance.should_receive(:create_host).and_return(server)
+        Blimpy::Box.any_instance.should_receive(:ensure_state_dir).and_return(true)
+      end
+
+      it 'should create a state file' do
+        path = File.join(subject.state_dir, "#{server_id}.blimp")
+        File.should_receive(:open).with(path, 'w')
+        subject.start
+      end
     end
 
-    it 'should create a state file' do
-      path = File.join(subject.state_dir, "#{server_id}.blimp")
-      File.should_receive(:open).with(path, 'w')
-      subject.start
+    describe '#destroy' do
+      before :each do
+        server.should_receive(:destroy)
+      end
+      subject { Blimpy::Box.new(server) }
+
+      it 'should remove its state file' do
+        subject.should_receive(:state_file).and_return('foo')
+        File.should_receive(:unlink).with(File.join(subject.state_dir, 'foo'))
+        subject.destroy
+      end
     end
   end
 

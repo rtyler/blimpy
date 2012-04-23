@@ -35,4 +35,22 @@ describe Blimpy::Fleet do
       end
     end
   end
+
+
+  context 'group operations' do
+    before :each do
+      subject.should_receive(:members).and_return([])
+    end
+    describe '#stop' do
+      it 'should run stop' do
+        subject.stop
+      end
+    end
+
+    describe '#destroy' do
+      it 'should run destroy' do
+        subject.destroy
+      end
+    end
+  end
 end

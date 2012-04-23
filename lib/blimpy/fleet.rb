@@ -36,16 +36,32 @@ module Blimpy
           ready?
         end
         print ".. online at: #{host.server.dns_name}"
+        host.online!
         puts
       end
     end
 
+    def members
+      instance_ids = []
+      Dir["#{Dir.pwd}/.blimpy.d/*.blimp"].each do |d|
+        filename = File.basename(d)
+        instance_ids << filename.split('.blimp').first
+      end
+      instance_ids
+    end
+
     def stop
-      raise NotImplementedError
+      members.each do |instance_id|
+        box = Blimpy::Box.from_instance_id(instance_id)
+        box.stop
+      end
     end
 
     def destroy
-      raise NotImplementedError
+      members.each do |instance_id|
+        box = Blimpy::Box.from_instance_id(instance_id)
+        box.destroy
+      end
     end
   end
 end

@@ -27,9 +27,6 @@ Given /^I have a single VM running$/ do
 end
 
 Then /^the output should list the VM$/ do
-  expected =
-    """
-    Cucumber host (0xdeadbeef) is: online at foo.bar
-    """
+  expected = 'Cucumber host (0xdeadbeef) is: online at foo.bar'
   assert_partial_output(expected, all_output)
 end

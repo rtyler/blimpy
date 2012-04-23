@@ -31,7 +31,24 @@ module Blimpy
 
     desc 'list', 'List running blimps'
     def list
-      puts 'No currently running VMs'
+      blimps = Dir["#{Dir.pwd}/.blimpy.d/*.blimp"]
+      if blimps.empty?
+        puts 'No currently running VMs'
+        exit 0
+      end
+
+      blimps.each do |blimp|
+        data = YAML.load_file(blimp)
+        instance_id = File.basename(blimp)
+        instance_id = instance_id.split('.blimp').first
+        puts "#{data['name']} (#{instance_id}) is: online at #{data['dns']}"
+      end
+    end
+
+    desc 'destroy', 'Destroy all running blimps'
+    def destroy
+      fleet = Blimpy::Fleet.new
+      fleet.destroy
     end
   end
 end
