@@ -20,6 +20,11 @@ module Blimpy
     end
 
     def start
+      # Make sure all our hosts are valid first!
+      @hosts.each do |host|
+        host.validate!
+      end
+
       @hosts.each do |host|
         @servers << host.start
       end
