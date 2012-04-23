@@ -4,8 +4,8 @@ require File.expand_path('../lib/blimpy/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["R. Tyler Croy"]
   gem.email         = ["tyler@monkeypox.org"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Blimpy is a tool for managing a fleet of machines in the CLOUD!}
+  gem.summary       = %q{Ruby + CLOUD = Blimpy}
   gem.homepage      = "https://github.com/rtyler/blimpy"
 
   gem.files         = `git ls-files`.split($\)
