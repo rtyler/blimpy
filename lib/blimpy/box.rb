@@ -1,11 +1,18 @@
 
 module Blimpy
   class Box
+    # Default to US West (Oregon)
+    DEFAULT_REGION = 'us-west-2'
+    # Default to 10.04 64-bit
+    DEFAULT_IMAGE_ID = 'ami-ec0b86dc'
+
     attr_reader :allowed_regions, :region, :server
     attr_accessor :image_id, :livery, :group, :name, :tags, :fleet_id
 
-    def self.from_instance_id(an_id)
-      server = Fog::Compute[:aws].servers.get(an_id)
+    def self.from_instance_id(an_id, data)
+      region = data['region'] || DEFAULT_REGION
+      fog = Fog::Compute.new(:provider => 'AWS', :region => region)
+      server = fog.servers.get(an_id)
       if server.nil?
         return nil
       end
@@ -14,8 +21,8 @@ module Blimpy
 
     def initialize(server=nil)
       @allowed_regions = ['us-west-1', 'us-west-2', 'us-east-1']
-      @region = 'us-west-2' # Default to US West (Oregon) for now
-      @image_id = 'ami-349b495d' # Default to Ubuntu 10.04 LTS (64bit)
+      @region = DEFAULT_REGION
+      @image_id = DEFAULT_IMAGE_ID
       @livery = nil
       @group = nil
       @name = 'Unnamed Box'
@@ -49,6 +56,7 @@ module Blimpy
 
       File.open(File.join(state_dir, state_file), 'w') do |f|
         f.write("name: #{@name}\n")
+        f.write("region: #{@region}\n")
       end
     end
 
@@ -86,7 +94,10 @@ module Blimpy
 
     def create_host
       tags = @tags.merge({:Name => @name, :CreatedBy => 'Blimpy', :BlimpyFleetId => @fleet_id})
-      Fog::Compute[:aws].servers.create(:image_id => @image_id, :region => @region, :tags => tags)
+      if @fog.nil?
+        @fog = Fog::Compute.new(:provider => 'AWS', :region => @region)
+      end
+      @fog.servers.create(:image_id => @image_id, :tags => tags)
     end
   end
 end

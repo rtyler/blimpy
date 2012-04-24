@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Blimpy::Box do
   describe '#image_id' do
     it 'should be the Ubuntu 10.04 AMI ID by default' do
-      subject.image_id.should == 'ami-349b495d'
+      subject.image_id.should == Blimpy::Box::DEFAULT_IMAGE_ID
     end
   end
 

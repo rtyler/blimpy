@@ -42,24 +42,26 @@ module Blimpy
     end
 
     def members
-      instance_ids = []
+      instances = []
       Dir["#{Dir.pwd}/.blimpy.d/*.blimp"].each do |d|
         filename = File.basename(d)
-        instance_ids << filename.split('.blimp').first
+        instance_id = filename.split('.blimp').first
+        instance_data = YAML.load_file(d)
+        instances << [instance_id, instance_data]
       end
-      instance_ids
+      instances
     end
 
     def stop
-      members.each do |instance_id|
-        box = Blimpy::Box.from_instance_id(instance_id)
+      members.each do |instance_id, instance_data|
+        box = Blimpy::Box.from_instance_id(instance_id, instance_data)
         box.stop
       end
     end
 
     def destroy
-      members.each do |instance_id|
-        box = Blimpy::Box.from_instance_id(instance_id)
+      members.each do |instance_id, instance_data|
+        box = Blimpy::Box.from_instance_id(instance_id, instance_data)
         box.destroy
       end
     end
