@@ -36,11 +36,24 @@ describe Blimpy::Fleet do
     end
   end
 
-
   context 'group operations' do
-    before :each do
-      subject.should_receive(:members).and_return([])
+    let(:members) do
+      members = []
+      members << [0xdeadbeef, {}]
+      members
     end
+    let(:box) do
+      box = double('Blimpy::Box')
+      box.stub(:stop)
+      box.stub(:destroy)
+      box
+    end
+
+    before :each do
+      Blimpy::Box.should_receive(:from_instance_id).with(0xdeadbeef, {}).and_return(box)
+      subject.should_receive(:members).and_return(members)
+    end
+
     describe '#stop' do
       it 'should run stop' do
         subject.stop
@@ -50,6 +63,13 @@ describe Blimpy::Fleet do
     describe '#destroy' do
       it 'should run destroy' do
         subject.destroy
+      end
+    end
+
+    describe '#start' do
+      it 'should invoke resume' do
+        box.should_receive(:resume)
+        subject.start
       end
     end
   end

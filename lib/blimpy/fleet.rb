@@ -19,7 +19,28 @@ module Blimpy
       block.call(box)
     end
 
+    def resume(instances)
+      boxes = []
+      print '>> Resuming: '
+      instances.each do |instance_id, instance_data|
+        print "#{instance_data['name']},"
+        box = Blimpy::Box.from_instance_id(instance_id, instance_data)
+        box.resume
+        boxes << box
+      end
+
+      boxes.each do |box|
+        box.server.wait_for { print '.' ; ready? }
+      end
+      puts
+    end
+
     def start
+      instances = members
+      unless instances.empty?
+        return resume(instances)
+      end
+
       # Make sure all our hosts are valid first!
       @hosts.each do |host|
         host.validate!
@@ -53,10 +74,20 @@ module Blimpy
     end
 
     def stop
+      print '>> Stopping: '
+      boxes = []
+
       members.each do |instance_id, instance_data|
         box = Blimpy::Box.from_instance_id(instance_id, instance_data)
+        print "#{instance_data['name']},"
         box.stop
+        boxes << box
       end
+
+      boxes.each do |box|
+        box.server.wait_for { print '.' ; state == 'stopped' }
+      end
+      puts
     end
 
     def destroy

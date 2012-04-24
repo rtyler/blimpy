@@ -63,6 +63,12 @@ module Blimpy
       fleet.destroy
     end
 
+    desc 'stop', 'Stop the running blimps'
+    def stop
+      ensure_blimpfile
+      fleet = Blimpy::Fleet.new
+      fleet.stop
+    end
 
     desc 'init', 'Create a skeleton Blimpfile in the current directory'
     def init

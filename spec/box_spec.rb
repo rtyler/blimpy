@@ -109,7 +109,6 @@ describe Blimpy::Box do
       end
     end
 
-
     describe '#stop' do
       before :each do
         server.should_receive(:stop)
@@ -121,6 +120,7 @@ describe Blimpy::Box do
         subject.stop
       end
     end
+
     describe '#destroy' do
       before :each do
         server.should_receive(:destroy)

@@ -53,11 +53,7 @@ module Blimpy
     def start
       ensure_state_dir
       @server = create_host
-
-      File.open(File.join(state_dir, state_file), 'w') do |f|
-        f.write("name: #{@name}\n")
-        f.write("region: #{@region}\n")
-      end
+      write_state_file
     end
 
     def stop
@@ -66,10 +62,23 @@ module Blimpy
       end
     end
 
+    def resume
+      unless @server.nil?
+        @server.start
+      end
+    end
+
     def destroy
       unless @server.nil?
         @server.destroy
         File.unlink(File.join(state_dir, state_file))
+      end
+    end
+
+    def write_state_file
+      File.open(File.join(state_dir, state_file), 'w') do |f|
+        f.write("name: #{@name}\n")
+        f.write("region: #{@region}\n")
       end
     end
 
