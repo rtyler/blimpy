@@ -133,6 +133,20 @@ describe Blimpy::Box do
         subject.destroy
       end
     end
+
+    describe '#from_instance_id' do
+      let(:fog) { double('Fog::Compute') }
+      before :each do
+        fog.stub_chain(:servers, :get).and_return(server)
+        Fog::Compute.should_receive(:new).and_return(fog)
+      end
+
+      it 'should create a new Box instance' do
+        result = Blimpy::Box.from_instance_id('someid', {})
+        result.should be_instance_of Blimpy::Box
+      end
+
+    end
   end
 
   describe '#ensure_state_dir' do
