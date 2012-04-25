@@ -46,6 +46,10 @@ module Blimpy
       end
 
       @hosts.each do |host|
+        host.start
+      end
+
+      @hosts.each do |host|
         print ">> #{host.name} "
         host.wait_for_state('running') { print '.' }
         print ".. online at: #{host.dns_name}"
