@@ -6,7 +6,7 @@ module Blimpy
     # Default to 10.04 64-bit
     DEFAULT_IMAGE_ID = 'ami-ec0b86dc'
 
-    attr_reader :allowed_regions, :region, :server
+    attr_reader :allowed_regions, :region
     attr_accessor :image_id, :livery, :group, :name, :tags, :fleet_id
 
     def self.from_instance_id(an_id, data)
@@ -97,6 +97,22 @@ module Blimpy
       unless File.exist? state_dir
         Dir.mkdir(state_dir)
       end
+    end
+
+    def wait_for_state(until_state, &block)
+      if @server.nil?
+        return
+      end
+
+      @server.wait_for do
+        block.call
+        @server.state == until_state
+      end
+    end
+
+    def dns_name
+      return @server.dns_name  unless @server.nil?
+      'no name'
     end
 
     private

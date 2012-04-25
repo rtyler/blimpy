@@ -46,6 +46,7 @@ describe Blimpy::Fleet do
       box = double('Blimpy::Box')
       box.stub(:stop)
       box.stub(:destroy)
+      box.stub(:wait_for_state)
       box
     end
 

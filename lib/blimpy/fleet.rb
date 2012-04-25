@@ -5,7 +5,6 @@ module Blimpy
 
     def initialize
       @hosts = []
-      @servers = []
       @id = Time.now.utc.to_i
     end
 
@@ -30,7 +29,7 @@ module Blimpy
       end
 
       boxes.each do |box|
-        box.server.wait_for { print '.' ; ready? }
+        box.wait_for_state('running') { print '.' }
       end
       puts
     end
@@ -47,16 +46,9 @@ module Blimpy
       end
 
       @hosts.each do |host|
-        @servers << host.start
-      end
-
-      @hosts.each do |host|
         print ">> #{host.name} "
-        host.server.wait_for do
-          print '.'
-          ready?
-        end
-        print ".. online at: #{host.server.dns_name}"
+        host.wait_for_state('running') { print '.' }
+        print ".. online at: #{host.dns_name}"
         host.online!
         puts
       end
@@ -85,7 +77,7 @@ module Blimpy
       end
 
       boxes.each do |box|
-        box.server.wait_for { print '.' ; state == 'stopped' }
+        box.wait_for_state('stopped')  { print '.' }
       end
       puts
     end
