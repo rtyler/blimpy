@@ -7,9 +7,18 @@ RSpec::Core::RakeTask.new('spec') do |t|
   t.rspec_opts = '--color --fail-fast'
 end
 
-Cucumber::Rake::Task.new('cucumber') do |t|
-  t.cucumber_opts = '--color --format progress --tags ~@wip'
+
+namespace :cucumber do
+  cucumber_opts = '--color --format progress --tags ~@wip'
+
+  Cucumber::Rake::Task.new('basic') do |t|
+    t.cucumber_opts = cucumber_opts + ' --tags ~@slow'
+  end
+
+  Cucumber::Rake::Task.new('integration') do |t|
+    t.cucumber_opts = cucumber_opts + '--tags @slow'
+  end
 end
 
-task :test => [:spec, :cucumber]
+task :test => [:spec, :"cucumber:basic"]
 
