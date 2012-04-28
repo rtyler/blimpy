@@ -1,6 +1,9 @@
+require 'blimpy/helpers/state'
 
 module Blimpy
   class Box
+    include Blimpy::Helpers::State
+
     # Default to US West (Oregon)
     DEFAULT_REGION = 'us-west-2'
     # Default to 10.04 64-bit
@@ -45,13 +48,13 @@ module Blimpy
     end
 
     def online!
-      File.open(File.join(state_dir, state_file), 'a') do |f|
+      File.open(state_file, 'a') do |f|
         f.write("dns: #{@server.dns_name}\n")
       end
     end
 
     def start
-      ensure_state_dir
+      ensure_state_folder
       @server = create_host
       write_state_file
     end
@@ -71,32 +74,23 @@ module Blimpy
     def destroy
       unless @server.nil?
         @server.destroy
-        File.unlink(File.join(state_dir, state_file))
+        File.unlink(state_file)
       end
     end
 
     def write_state_file
-      File.open(File.join(state_dir, state_file), 'w') do |f|
+      File.open(state_file, 'w') do |f|
         f.write("name: #{@name}\n")
         f.write("region: #{@region}\n")
       end
     end
 
-    def state_dir
-      File.join(Dir.pwd, '.blimpy.d')
-    end
 
     def state_file
       if @server.nil?
         raise Exception, "I can't make a state file without a @server!"
       end
-      "#{@server.id}.blimp"
-    end
-
-    def ensure_state_dir
-      unless File.exist? state_dir
-        Dir.mkdir(state_dir)
-      end
+      File.join(state_folder, "#{@server.id}.blimp")
     end
 
     def wait_for_state(until_state, &block)

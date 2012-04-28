@@ -99,12 +99,12 @@ describe Blimpy::Box do
       before :each do
         # Mocking out #create_host so we don't actually create EC2 instance
         Blimpy::Box.any_instance.should_receive(:create_host).and_return(server)
-        Blimpy::Box.any_instance.should_receive(:ensure_state_dir).and_return(true)
+        Blimpy::Box.any_instance.should_receive(:ensure_state_folder).and_return(true)
       end
 
       it 'should create a state file' do
-        path = File.join(subject.state_dir, "#{server_id}.blimp")
-        File.should_receive(:open).with(path, 'w')
+        subject.stub(:state_file).and_return('fake-state-file')
+        File.should_receive(:open).with('fake-state-file', 'w')
         subject.start
       end
     end
@@ -128,8 +128,8 @@ describe Blimpy::Box do
       subject { Blimpy::Box.new(server) }
 
       it 'should remove its state file' do
-        subject.should_receive(:state_file).and_return('foo')
-        File.should_receive(:unlink).with(File.join(subject.state_dir, 'foo'))
+        subject.should_receive(:state_file).and_return('fake-state-file')
+        File.should_receive(:unlink).with('fake-state-file')
         subject.destroy
       end
     end
@@ -146,32 +146,6 @@ describe Blimpy::Box do
         result.should be_instance_of Blimpy::Box
       end
 
-    end
-  end
-
-  describe '#ensure_state_dir' do
-    let(:path) { File.join(Dir.pwd, '.blimpy.d') }
-
-    context 'if ./.blimpy.d does not exist' do
-      before :each do
-        File.should_receive(:exist?).with(path).and_return(false)
-      end
-
-      it 'should create directory' do
-        Dir.should_receive(:mkdir).with(path)
-        subject.ensure_state_dir
-      end
-    end
-
-    context 'if ./blimpy.d does exist' do
-      before :each do
-        File.should_receive(:exist?).with(path).and_return(true)
-      end
-
-      it 'should create directory' do
-        Dir.should_receive(:mkdir).with(path).never
-        subject.ensure_state_dir
-      end
     end
   end
 end
