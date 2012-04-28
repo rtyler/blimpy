@@ -11,7 +11,8 @@ module Blimpy
     DEFAULT_IMAGE_ID = 'ami-ec0b86dc'
 
     attr_reader :allowed_regions, :region
-    attr_accessor :image_id, :livery, :group, :name, :tags, :fleet_id
+    attr_accessor :image_id, :livery, :group
+    attr_accessor :name, :tags, :fleet_id, :username
 
     def self.from_instance_id(an_id, data)
       region = data['region'] || DEFAULT_REGION
@@ -20,7 +21,9 @@ module Blimpy
       if server.nil?
         return nil
       end
-      self.new(server)
+      box = self.new(server)
+      box.name = data['name']
+      box
     end
 
     def initialize(server=nil)
@@ -30,6 +33,7 @@ module Blimpy
       @livery = nil
       @group = nil
       @name = 'Unnamed Box'
+      @username = 'ubuntu'
       @tags = {}
       @server = server
       @fleet_id = 0
@@ -114,6 +118,27 @@ module Blimpy
     def internal_dns_name
       return @server.private_dns_name unless @server.nil?
       'no name'
+    end
+
+    def ssh_into
+      start = Time.now.to_i
+      print "..making sure #{@name} is online"
+      begin
+        TCPSocket.new(dns_name, 22)
+      rescue Errno::ECONNREFUSED
+        if (Time.now.to_i - start) < 30
+          print '.'
+          retry
+        end
+      end
+      puts
+      command = "ssh -l #{username} #{dns_name}"
+      # In case we have more than our usual 'ssh <name>' arguments, we
+      # should pass those into the SSH invocation
+      if ARGV.size > 2
+        command = "#{command} #{ARGV[2..-1].join(' ')}"
+      end
+      ::Kernel.exec(command)
     end
 
     private

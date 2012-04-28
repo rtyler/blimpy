@@ -81,9 +81,22 @@ end
       end
     end
 
-    desc 'ssh', 'Log into a running blimp'
-    def ssh
+    desc 'ssh BLIMP_NAME', 'Log into a running blimp'
+    def ssh(name)
       ensure_blimpfile
+      fleet = Blimpy::Fleet.new
+      box = nil
+      fleet.members.each do |instance_id, data|
+        box_name = data['name']
+        next unless box_name == name
+        box  = Blimpy::Box.from_instance_id(instance_id, data)
+      end
+      if box.nil?
+        puts "Could not find blimp named \"#{name}\""
+        exit 1
+      end
+
+      box.ssh_into
     end
   end
 end

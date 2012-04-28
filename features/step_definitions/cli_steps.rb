@@ -26,11 +26,23 @@ Given /^I have a single VM running$/ do
   end
 end
 
+When /^I ssh into the machine$/ do
+  step %{I run `blimpy start`}
+  step %{I run `blimpy ssh "Cucumber Host" -o StrictHostKeyChecking=no` interactively}
+end
+
 Then /^the output should list the VM$/ do
   expected = 'Cucumber host (0xdeadbeef) is: online at foo.bar'
   assert_partial_output(expected, all_output)
 end
 
 Then /^the output should contain the right DNS info$/ do
-    pending # express the regexp above with the code you wish you had
+  terminate_processes!
+  internal_name = nil
+  Dir["#{@tempdir}/.blimpy.d/*.blimp"].each do |filename|
+    data = YAML.load_file(filename)
+    internal_name = data['internal_dns']
+    break unless internal_name.nil?
+  end
+  step %{the output should contain "#{internal_name}"}
 end
