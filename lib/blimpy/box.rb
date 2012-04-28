@@ -51,6 +51,7 @@ module Blimpy
     def online!
       File.open(state_file, 'a') do |f|
         f.write("dns: #{@server.dns_name}\n")
+        f.write("internal_dns: #{@server.private_dns_name}\n")
       end
     end
 
@@ -106,7 +107,12 @@ module Blimpy
     end
 
     def dns_name
-      return @server.dns_name  unless @server.nil?
+      return @server.dns_name unless @server.nil?
+      'no name'
+    end
+
+    def internal_dns_name
+      return @server.private_dns_name unless @server.nil?
       'no name'
     end
 
