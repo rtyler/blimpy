@@ -6,6 +6,16 @@ Before do
   @dirs = [@tempdir]
 end
 
+Before '@slow' do
+  @aruba_timeout_seconds = 90
+end
+
+After '@destroy' do |scenario|
+  Dir.chdir(@tempdir) do
+    `blimpy destroy`
+  end
+end
+
 After do |scenario|
   Dir.chdir(@cwd)
 

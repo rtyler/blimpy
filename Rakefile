@@ -16,7 +16,7 @@ namespace :cucumber do
   end
 
   Cucumber::Rake::Task.new('integration') do |t|
-    t.cucumber_opts = cucumber_opts + '--tags @slow'
+    t.cucumber_opts = cucumber_opts + ' --tags @slow'
   end
 end
 
