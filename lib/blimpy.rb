@@ -19,4 +19,6 @@ module Blimpy
   end
   class BoxValidationError < Exception
   end
+  class SSHKeyNotFoundError < Exception
+  end
 end

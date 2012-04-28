@@ -1,4 +1,5 @@
 require 'blimpy/helpers/state'
+require 'blimpy/keys'
 
 module Blimpy
   class Box
@@ -116,7 +117,12 @@ module Blimpy
       if @fog.nil?
         @fog = Fog::Compute.new(:provider => 'AWS', :region => @region)
       end
-      @fog.servers.create(:image_id => @image_id, :tags => tags)
+
+      Blimpy::Keys.import_key(@fog)
+      @fog.servers.create(:image_id => @image_id,
+                          :key_name => Blimpy::Keys.key_name,
+                          :groups => [@group],
+                          :tags => tags)
     end
   end
 end
