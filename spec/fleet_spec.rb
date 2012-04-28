@@ -53,6 +53,9 @@ describe Blimpy::Fleet do
     before :each do
       Blimpy::Box.should_receive(:from_instance_id).with(0xdeadbeef, {}).and_return(box)
       subject.should_receive(:members).and_return(members)
+      # Stub out output methods, this will keep our output clean in RSpec
+      subject.stub(:print)
+      subject.stub(:puts)
     end
 
     describe '#stop' do
