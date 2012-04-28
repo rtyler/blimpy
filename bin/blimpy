@@ -1,92 +1,11 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'thor'
 
 begin
-  require 'blimpy'
+  require 'blimpy/cli'
 rescue LoadError
   $:.unshift File.expand_path(File.dirname(__FILE__) + '/../lib/')
-  require 'blimpy'
-end
-
-module Blimpy
-  class CLI < Thor
-    BLIMPFILE = File.join(Dir.pwd, 'Blimpfile')
-
-    no_tasks do
-      def ensure_blimpfile
-        unless File.exists? Blimpy::CLI::BLIMPFILE
-          puts 'Please create a Blimpfile in your current directory'
-          exit 1
-        end
-      end
-    end
-
-    desc 'start', 'Start up a fleet of blimps'
-    method_options :"dry-run" => :boolean
-    def start
-      ensure_blimpfile
-      engine = Blimpy::Engine.new
-      engine.load_file(File.open(BLIMPFILE).read)
-      puts 'Up, up and away!'
-
-      if options[:'dry-run']
-        puts 'skipping actually starting the fleet'
-        exit 0
-      end
-
-      engine.fleet.start
-    end
-
-    desc 'list', 'List running blimps'
-    def list
-      ensure_blimpfile
-      blimps = Dir["#{Dir.pwd}/.blimpy.d/*.blimp"]
-      if blimps.empty?
-        puts 'No currently running VMs'
-        exit 0
-      end
-
-      blimps.each do |blimp|
-        data = YAML.load_file(blimp)
-        instance_id = File.basename(blimp)
-        instance_id = instance_id.split('.blimp').first
-        puts "#{data['name']} (#{instance_id}) is: online at #{data['dns']}"
-      end
-    end
-
-    desc 'destroy', 'Destroy all running blimps'
-    def destroy
-      ensure_blimpfile
-      fleet = Blimpy::Fleet.new
-      fleet.destroy
-    end
-
-    desc 'stop', 'Stop the running blimps'
-    def stop
-      ensure_blimpfile
-      fleet = Blimpy::Fleet.new
-      fleet.stop
-    end
-
-    desc 'init', 'Create a skeleton Blimpfile in the current directory'
-    def init
-      File.open(File.join(Dir.pwd, 'Blimpfile'), 'w') do |f|
-        f.write(
-"""# vim: ft=ruby
-# Blimpfile created on #{Time.now}
-
-Blimpy.fleet do |fleet|
-  fleet.add do |ship|
-    ship.name = 'Excelsior'
-    ship.group = 'default'
-  end
-end
-""")
-      end
-    end
-  end
+  require 'blimpy/cli'
 end
 
 Blimpy::CLI.start
