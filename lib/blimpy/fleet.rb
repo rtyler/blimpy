@@ -1,7 +1,10 @@
+require 'blimpy/helpers/state'
 
 module Blimpy
   class Fleet
-    attr_reader :hosts
+    include Blimpy::Helpers::State
+
+    attr_reader :hosts, :id
 
     def initialize
       @hosts = []
@@ -16,6 +19,16 @@ module Blimpy
       box.fleet_id = @id
       @hosts << box
       block.call(box)
+    end
+
+    def state_file
+      File.join(state_folder, 'manifest')
+    end
+
+    def save!
+      File.open(state_file, 'w') do |f|
+        f.write("id=#{id}\n")
+      end
     end
 
     def resume(instances)
@@ -45,7 +58,9 @@ module Blimpy
         host.validate!
       end
 
+      puts '>> Starting:'
       @hosts.each do |host|
+        puts "..#{host.name}"
         host.start
       end
 
@@ -56,6 +71,8 @@ module Blimpy
         host.online!
         puts
       end
+
+      save!
     end
 
     def members
@@ -90,6 +107,10 @@ module Blimpy
       members.each do |instance_id, instance_data|
         box = Blimpy::Box.from_instance_id(instance_id, instance_data)
         box.destroy
+      end
+
+      if File.exists? state_file
+        File.unlink(state_file)
       end
     end
   end

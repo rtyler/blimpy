@@ -36,6 +36,33 @@ describe Blimpy::Fleet do
     end
   end
 
+  describe '#save!' do
+    let(:manifest) { 'fake-manifest' }
+    let(:manifest_file) do
+      fd = mock('Manifest File Descriptor')
+      fd
+    end
+
+    before :each do
+      subject.should_receive(:state_file).and_return(manifest)
+    end
+
+    it 'should save the fleet id' do
+      fleet_id = 1337
+      subject.should_receive(:id).and_return(fleet_id)
+      File.should_receive(:open).with(manifest, 'w').and_yield(manifest_file)
+      manifest_file.should_receive(:write).with("id=#{fleet_id}\n")
+      subject.save!
+    end
+  end
+
+  describe '#state_file' do
+    it 'should return a file named manifest' do
+      subject.should_receive(:state_folder).and_return('fake-state-folder')
+      subject.state_file.should == 'fake-state-folder/manifest'
+    end
+  end
+
   context 'group operations' do
     let(:members) do
       members = []
