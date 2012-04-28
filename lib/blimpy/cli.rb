@@ -82,7 +82,7 @@ end
     end
 
     desc 'ssh BLIMP_NAME', 'Log into a running blimp'
-    def ssh(name)
+    def ssh(name, *args)
       ensure_blimpfile
       fleet = Blimpy::Fleet.new
       box = nil

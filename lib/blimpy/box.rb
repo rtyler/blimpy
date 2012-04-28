@@ -132,13 +132,7 @@ module Blimpy
         end
       end
       puts
-      command = "ssh -l #{username} #{dns_name}"
-      # In case we have more than our usual 'ssh <name>' arguments, we
-      # should pass those into the SSH invocation
-      if ARGV.size > 2
-        command = "#{command} #{ARGV[2..-1].join(' ')}"
-      end
-      ::Kernel.exec(command)
+      ::Kernel.exec('ssh', '-l', username, dns_name, *ARGV[2..-1])
     end
 
     private
