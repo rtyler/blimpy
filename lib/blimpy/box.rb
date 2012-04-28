@@ -106,7 +106,7 @@ module Blimpy
 
       @server.wait_for do
         block.call
-        @server.state == until_state
+        state == until_state
       end
     end
 
