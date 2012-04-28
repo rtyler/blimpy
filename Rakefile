@@ -20,9 +20,11 @@ namespace :cucumber do
   end
 end
 
+desc 'Run the basic test suite'
 task :test => [:spec, :"cucumber:basic"]
 
 namespace :test do
+  desc 'Run all the tests, including the slow integration tests'
   task :all => [:spec, :'cucumber:basic', :'cucumber:integration']
 end
 
