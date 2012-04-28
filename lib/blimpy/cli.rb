@@ -80,5 +80,10 @@ end
 """)
       end
     end
+
+    desc 'ssh', 'Log into a running blimp'
+    def ssh
+      ensure_blimpfile
+    end
   end
 end

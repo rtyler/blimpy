@@ -30,3 +30,7 @@ Then /^the output should list the VM$/ do
   expected = 'Cucumber host (0xdeadbeef) is: online at foo.bar'
   assert_partial_output(expected, all_output)
 end
+
+Then /^the output should contain the right DNS info$/ do
+    pending # express the regexp above with the code you wish you had
+end

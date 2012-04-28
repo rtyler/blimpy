@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-
 begin
   require 'blimpy/cli'
 rescue LoadError
@@ -9,5 +8,4 @@ rescue LoadError
 end
 
 Blimpy::CLI.start
-
 exit 0
