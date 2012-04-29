@@ -4,10 +4,10 @@ module Blimpy
   class Fleet
     include Blimpy::Helpers::State
 
-    attr_reader :hosts, :id
+    attr_reader :ships, :id
 
     def initialize
-      @hosts = []
+      @ships = []
       @id = Time.now.utc.to_i
     end
 
@@ -17,7 +17,7 @@ module Blimpy
       end
       box = Blimpy::Box.new
       box.fleet_id = @id
-      @hosts << box
+      @ships << box
       block.call(box)
     end
 
@@ -53,18 +53,18 @@ module Blimpy
         return resume(instances)
       end
 
-      # Make sure all our hosts are valid first!
-      @hosts.each do |host|
+      # Make sure all our ships are valid first!
+      @ships.each do |host|
         host.validate!
       end
 
       puts '>> Starting:'
-      @hosts.each do |host|
+      @ships.each do |host|
         puts "..#{host.name}"
         host.start
       end
 
-      @hosts.each do |host|
+      @ships.each do |host|
         print ">> #{host.name} "
         host.wait_for_state('running') { print '.' }
         print ".. online at: #{host.dns_name}"

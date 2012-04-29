@@ -16,13 +16,33 @@ module Blimpy
         end
       end
 
+      def load_engine
+        engine = Blimpy::Engine.new
+        engine.load_file(File.open(BLIMPFILE).read)
+        engine
+      end
+
+
       def box_by_name(name)
-        fleet = Blimpy::Fleet.new
+        engine = load_engine
         box = nil
-        fleet.members.each do |instance_id, data|
-          box_name = data['name']
-          next unless box_name == name
-          box = Blimpy::Box.from_instance_id(instance_id, data)
+        id = nil
+        data = nil
+        engine.fleet.members.each do |instance_id, instance_data|
+          next unless instance_data['name'] == name
+          id = instance_id
+          data = instance_data
+          break
+        end
+
+        if id.nil?
+          return nil
+        end
+
+        engine.fleet.ships.each do |ship|
+          next unless ship.name == name
+          ship.server = Blimpy::Box.fog_server_for_instance(id, data)
+          box = ship
         end
         box
       end
@@ -32,8 +52,7 @@ module Blimpy
     method_options :"dry-run" => :boolean
     def start
       ensure_blimpfile
-      engine = Blimpy::Engine.new
-      engine.load_file(File.open(BLIMPFILE).read)
+      engine = load_engine
       puts 'Up, up and away!'
 
       if options[:'dry-run']
@@ -114,6 +133,17 @@ end
       end
       box.wait_for_sshd
       box.scp_file(filename)
+    end
+
+    desc 'provision BLIMP_NAME', 'Run the livery again'
+    def provision(name=nil)
+      ensure_blimpfile
+      box = box_by_name(name)
+      if box.nil?
+        puts "Could not find a blimp named \"#{name}\""
+        exit 1
+      end
+      box.bootstrap
     end
   end
 end

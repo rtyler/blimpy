@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe Blimpy::Fleet do
-  describe '#hosts' do
+  describe '#ships' do
     it 'should be an Array' do
-      subject.hosts.should be_instance_of Array
-      subject.hosts.size.should == 0
+      subject.ships.should be_instance_of Array
+      subject.ships.size.should == 0
     end
   end
 
@@ -31,7 +31,7 @@ describe Blimpy::Fleet do
 
       it 'should add the box the fleet' do
         @box.should_not be nil
-        subject.hosts.should include(@box)
+        subject.ships.should include(@box)
       end
     end
   end

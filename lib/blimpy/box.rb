@@ -12,16 +12,18 @@ module Blimpy
     DEFAULT_IMAGE_ID = 'ami-ec0b86dc'
 
     attr_reader :allowed_regions, :region
-    attr_accessor :image_id, :livery, :group
+    attr_accessor :image_id, :livery, :group, :server
     attr_accessor :name, :tags, :fleet_id, :username
 
-    def self.from_instance_id(an_id, data)
-      region = data['region'] || DEFAULT_REGION
+    def self.fog_server_for_instance(id, blimpdata)
+      region = blimpdata['region'] || DEFAULT_REGION
       fog = Fog::Compute.new(:provider => 'AWS', :region => region)
-      server = fog.servers.get(an_id)
-      if server.nil?
-        return nil
-      end
+      fog.servers.get(id)
+    end
+
+    def self.from_instance_id(an_id, data)
+      server = self.fog_server_for_instance(an_id, data)
+      return if server.nil?
       box = self.new(server)
       box.name = data['name']
       box

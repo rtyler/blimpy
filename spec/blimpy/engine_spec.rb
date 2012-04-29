@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Blimpy::Engine do
-
   describe '#load_file' do
     context 'no contents' do
       let(:content) { '' }
@@ -32,12 +31,12 @@ describe Blimpy::Engine do
       let(:content) do
         """
           Blimpy.fleet do |fleet|
-            fleet.add do |host|
-              host.image_id = 'ami-349b495d'
-              host.livery = 'rails'
-              host.group = 'Simple'
-              host.region = 'us-west-1'
-              host.name = 'Rails App Server'
+            fleet.add do |ship|
+              ship.image_id = 'ami-349b495d'
+              ship.livery = 'rails'
+              ship.group = 'Simple'
+              ship.region = 'us-west-1'
+              ship.name = 'Rails App Server'
             end
           end
         """
@@ -46,12 +45,12 @@ describe Blimpy::Engine do
       it 'should create the appropriate Fleet object' do
         result = subject.load_file(content)
         result.should be_instance_of Blimpy::Fleet
-        result.hosts.should be_instance_of Array
-        result.hosts.size.should == 1
+        result.ships.should be_instance_of Array
+        result.ships.size.should == 1
 
-        host = result.hosts.first
-        host.group.should == 'Simple'
-        host.name.should == 'Rails App Server'
+        ship = result.ships.first
+        ship.group.should == 'Simple'
+        ship.name.should == 'Rails App Server'
       end
     end
   end
