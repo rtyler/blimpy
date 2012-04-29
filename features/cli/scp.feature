@@ -20,7 +20,9 @@ Feature: SCP a file into a named VM
       Could not find a blimp named "Gherkins"
       """
 
-  @slow @destroy
+  # This test is in the same boat that the complimentary test in ssh.feature is
+  # in.
+  @slow @destroy @wip
   Scenario: SCPing a valid file
     Given I have the Blimpfile:
       """
