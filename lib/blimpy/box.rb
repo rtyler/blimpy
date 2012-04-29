@@ -38,6 +38,8 @@ module Blimpy
       @tags = {}
       @server = server
       @fleet_id = 0
+      @ssh_connected = false
+      @exec_commands = true
     end
 
     def region=(newRegion)
@@ -67,7 +69,9 @@ module Blimpy
     end
 
     def bootstrap
+      @exec_commands = false
       unless livery.nil?
+        wait_for_sshd
         bootstrap_livery
       end
     end
@@ -126,18 +130,26 @@ module Blimpy
       'no name'
     end
 
+    def run_command(*args)
+      if @exec_commands
+        ::Kernel.exec(*args)
+      else
+        ::Kernel.system(*args)
+      end
+    end
+
     def ssh_into(*args)
-      wait_for_sshd
       # Support using #ssh_into within our own code as well to pass arguments
       # to the ssh(1) binary
       args = args || ARGV[2 .. -1]
-      ::Kernel.exec('ssh', '-l', username, dns_name, *args)
+      run_command('ssh', '-o', 'StrictHostKeyChecking=no',
+                  '-l', username, dns_name, *args)
     end
 
     def scp_file(filename)
-      wait_for_sshd
       filename = File.expand_path(filename)
-      ::Kernel.exec('scp', filename, "#{username}@#{dns_name}:", *ARGV[3..-1])
+      run_command('scp', '-o', 'StrictHostKeyChecking=no',
+                  filename, "#{username}@#{dns_name}:", *ARGV[3..-1])
     end
 
     def bootstrap_livery
@@ -147,25 +159,36 @@ module Blimpy
         scp_file(tarball)
         # HAXX
         basename = File.basename(tarball)
-        ssh_into(["tar -zxvf #{basename} && cd #{basename} && sudo ./bootstrap.sh"])
+        puts 'Bootstrapping the livery'
+        ssh_into("tar -zxf #{basename} && cd #{File.basename(tarball, '.tar.gz')} && sudo ./bootstrap.sh")
       end
     end
 
-    private
-
     def wait_for_sshd
+      return if @ssh_connected
       start = Time.now.to_i
-      print "..making sure #{@name} is online"
-      begin
-        TCPSocket.new(dns_name, 22)
-      rescue Errno::ECONNREFUSED
-        if (Time.now.to_i - start) < 30
-          print '.'
-          retry
+      use_exec = @exec_commands
+      # Even if we are supposed to use #exec here, we wait to disable it until
+      # after sshd(8) comes online
+      @exec_commands = false
+
+      print "..waiting for sshd on #{@name} to come online"
+      until @ssh_connected
+        # Run the `true` command and exit
+        @ssh_connected = ssh_into('-q', 'true')
+
+        unless @ssh_connected
+          if (Time.now.to_i - start) < 30
+            print '.'
+            sleep 1
+          end
         end
       end
       puts
+      @exec_commands = use_exec
     end
+
+    private
 
     def create_host
       tags = @tags.merge({:Name => @name, :CreatedBy => 'Blimpy', :BlimpyFleetId => @fleet_id})

@@ -100,6 +100,7 @@ end
         puts "Could not find a blimp named \"#{name}\""
         exit 1
       end
+      box.wait_for_sshd
       box.ssh_into
     end
 
@@ -111,6 +112,7 @@ end
         puts "Could not find a blimp named \"#{name}\""
         exit 1
       end
+      box.wait_for_sshd
       box.scp_file(filename)
     end
   end
