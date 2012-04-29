@@ -17,4 +17,5 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'fog'
   gem.add_dependency 'thor'
+  gem.add_dependency 'minitar'
 end
