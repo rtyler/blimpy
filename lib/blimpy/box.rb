@@ -121,6 +121,19 @@ module Blimpy
     end
 
     def ssh_into
+      wait_for_sshd
+      ::Kernel.exec('ssh', '-l', username, dns_name, *ARGV[2..-1])
+    end
+
+    def scp_file(filename)
+      wait_for_sshd
+      filename = File.expand_path(filename)
+      ::Kernel.exec('scp', filename, "#{username}@#{dns_name}:", *ARGV[3..-1])
+    end
+
+    private
+
+    def wait_for_sshd
       start = Time.now.to_i
       print "..making sure #{@name} is online"
       begin
@@ -132,10 +145,7 @@ module Blimpy
         end
       end
       puts
-      ::Kernel.exec('ssh', '-l', username, dns_name, *ARGV[2..-1])
     end
-
-    private
 
     def create_host
       tags = @tags.merge({:Name => @name, :CreatedBy => 'Blimpy', :BlimpyFleetId => @fleet_id})

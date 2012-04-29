@@ -16,7 +16,7 @@ Feature: SSH into a named VM
     Then the exit status should be 1
     And the output should contain:
       """
-      Could not find blimp named "Gherkins"
+      Could not find a blimp named "Gherkins"
       """
 
 

@@ -15,6 +15,17 @@ module Blimpy
           exit 1
         end
       end
+
+      def box_by_name(name)
+        fleet = Blimpy::Fleet.new
+        box = nil
+        fleet.members.each do |instance_id, data|
+          box_name = data['name']
+          next unless box_name == name
+          box = Blimpy::Box.from_instance_id(instance_id, data)
+        end
+        box
+      end
     end
 
     desc 'start', 'Start up a fleet of blimps'
@@ -84,19 +95,23 @@ end
     desc 'ssh BLIMP_NAME', 'Log into a running blimp'
     def ssh(name, *args)
       ensure_blimpfile
-      fleet = Blimpy::Fleet.new
-      box = nil
-      fleet.members.each do |instance_id, data|
-        box_name = data['name']
-        next unless box_name == name
-        box  = Blimpy::Box.from_instance_id(instance_id, data)
-      end
+      box = box_by_name(name)
       if box.nil?
-        puts "Could not find blimp named \"#{name}\""
+        puts "Could not find a blimp named \"#{name}\""
         exit 1
       end
-
       box.ssh_into
+    end
+
+    desc 'scp BLIMP_NAME FILE_NAME', 'Securely copy FILE_NAME into the blimp'
+    def scp(name, filename, *args)
+      ensure_blimpfile
+      box = box_by_name(name)
+      if box.nil?
+        puts "Could not find a blimp named \"#{name}\""
+        exit 1
+      end
+      box.scp_file(filename)
     end
   end
 end

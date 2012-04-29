@@ -26,6 +26,12 @@ Given /^I have a single VM running$/ do
   end
 end
 
+Given /^I have a file named "([^"]*)"$/ do |filename|
+  File.open(filename, 'w') do |fd|
+    fd.write("I am #{filename}\n")
+  end
+end
+
 When /^I ssh into the machine$/ do
   step %{I run `blimpy start`}
   step %{I run `blimpy ssh "Cucumber Host" -o StrictHostKeyChecking=no` interactively}
