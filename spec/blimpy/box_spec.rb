@@ -107,6 +107,28 @@ describe Blimpy::Box do
         File.should_receive(:open).with('fake-state-file', 'w')
         subject.start
       end
+
+      context 'with no set livery' do
+        before :each do
+          subject.livery = nil
+        end
+
+        it 'should not bootstrap the livery on start' do
+          subject.should_receive(:bootstrap_livery).never
+          subject.start
+        end
+      end
+
+      context 'with a set livery' do
+        before :each do
+          subject.livery = 'mock-livery'
+        end
+
+        it 'should bootstrap the livery on start' do
+          subject.should_receive(:bootstrap_livery)
+          subject.start
+        end
+      end
     end
 
     describe '#stop' do
@@ -146,6 +168,22 @@ describe Blimpy::Box do
         result.should be_instance_of Blimpy::Box
       end
 
+    end
+
+    describe '#bootstrap_livery' do
+      context 'with a livery of :cwd' do
+        before :each do
+          subject.livery = :cwd
+        end
+
+        it 'should tarball up the current directory' do
+          Dir.should_receive(:pwd).and_return('mock-pwd')
+          Blimpy::Livery.should_receive(:tarball_directory).with('mock-pwd').and_return('mock-pwd.tar.gz')
+          subject.should_receive(:scp_file).with('mock-pwd.tar.gz')
+          subject.should_receive(:ssh_into)
+          subject.bootstrap_livery
+        end
+      end
     end
   end
 end

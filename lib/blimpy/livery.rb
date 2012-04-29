@@ -12,11 +12,13 @@ module Blimpy
       directory = File.expand_path(directory)
       short_name = File.basename(directory)
 
+      tarball = nil
       Dir.chdir(File.expand_path(directory  + '/../')) do
-        self.gzip_for_directory(short_name, '/tmp') do |tgz|
+        tarball = self.gzip_for_directory(short_name, '/tmp') do |tgz|
           Archive::Tar::Minitar.pack(short_name, tgz)
         end
       end
+      tarball
     end
 
     private

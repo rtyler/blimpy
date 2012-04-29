@@ -1,4 +1,5 @@
 require 'blimpy/helpers/state'
+require 'blimpy/livery'
 require 'blimpy/keys'
 
 module Blimpy
@@ -63,6 +64,9 @@ module Blimpy
       ensure_state_folder
       @server = create_host
       write_state_file
+      unless livery.nil?
+        bootstrap_livery
+      end
     end
 
     def stop
@@ -90,7 +94,6 @@ module Blimpy
         f.write("region: #{@region}\n")
       end
     end
-
 
     def state_file
       if @server.nil?
@@ -120,15 +123,29 @@ module Blimpy
       'no name'
     end
 
-    def ssh_into
+    def ssh_into(*args)
       wait_for_sshd
-      ::Kernel.exec('ssh', '-l', username, dns_name, *ARGV[2..-1])
+      # Support using #ssh_into within our own code as well to pass arguments
+      # to the ssh(1) binary
+      args = args || ARGV[2 .. -1]
+      ::Kernel.exec('ssh', '-l', username, dns_name, *args)
     end
 
     def scp_file(filename)
       wait_for_sshd
       filename = File.expand_path(filename)
       ::Kernel.exec('scp', filename, "#{username}@#{dns_name}:", *ARGV[3..-1])
+    end
+
+    def bootstrap_livery
+      tarball = nil
+      if livery == :cwd
+        tarball = Blimpy::Livery.tarball_directory(Dir.pwd)
+        scp_file(tarball)
+        # HAXX
+        basename = File.basename(tarball)
+        ssh_into(["tar -zxvf #{basename} && cd #{basename} && sudo ./bootstrap.sh"])
+      end
     end
 
     private
