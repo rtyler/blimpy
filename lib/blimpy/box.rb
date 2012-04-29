@@ -64,6 +64,9 @@ module Blimpy
       ensure_state_folder
       @server = create_host
       write_state_file
+    end
+
+    def bootstrap
       unless livery.nil?
         bootstrap_livery
       end

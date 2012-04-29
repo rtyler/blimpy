@@ -107,28 +107,6 @@ describe Blimpy::Box do
         File.should_receive(:open).with('fake-state-file', 'w')
         subject.start
       end
-
-      context 'with no set livery' do
-        before :each do
-          subject.livery = nil
-        end
-
-        it 'should not bootstrap the livery on start' do
-          subject.should_receive(:bootstrap_livery).never
-          subject.start
-        end
-      end
-
-      context 'with a set livery' do
-        before :each do
-          subject.livery = 'mock-livery'
-        end
-
-        it 'should bootstrap the livery on start' do
-          subject.should_receive(:bootstrap_livery)
-          subject.start
-        end
-      end
     end
 
     describe '#stop' do

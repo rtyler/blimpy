@@ -69,6 +69,7 @@ module Blimpy
         host.wait_for_state('running') { print '.' }
         print ".. online at: #{host.dns_name}"
         host.online!
+        host.bootstrap
         puts
       end
 
