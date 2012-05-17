@@ -28,3 +28,5 @@ namespace :test do
   task :all => [:spec, :'cucumber:basic', :'cucumber:integration']
 end
 
+
+task :default => :test
