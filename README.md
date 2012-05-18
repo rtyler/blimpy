@@ -1,6 +1,7 @@
 # Blimpy
 
 ![Excelsior!](http://strongspace.com/rtyler/public/excelsior.png)
+[![Build Status](https://buildhive.cloudbees.com/job/rtyler/job/blimpy/badge/icon)](https://buildhive.cloudbees.com/job/rtyler/job/blimpy/)
 
 
 ### About
