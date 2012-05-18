@@ -31,7 +31,7 @@ describe Blimpy::Engine do
       let(:content) do
         """
           Blimpy.fleet do |fleet|
-            fleet.add do |ship|
+            fleet.add(:aws) do |ship|
               ship.image_id = 'ami-349b495d'
               ship.livery = 'rails'
               ship.group = 'Simple'

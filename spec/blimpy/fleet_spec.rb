@@ -9,29 +9,39 @@ describe Blimpy::Fleet do
   end
 
   describe '#add' do
-    it 'should return false if no Box was properly added' do
-      subject.add.should == false
-    end
-
-    it 'should pass a Box instance to the block' do
-      invoked_block = false
-      subject.add do |box|
-        invoked_block = true
-        box.should be_instance_of Blimpy::Box
+    context 'with invalid parameters' do
+      it 'should raise an InvalidShipException' do
+        expect {
+          subject.add(:submarine)
+        }.to raise_error(Blimpy::InvalidShipException)
       end
-      invoked_block.should be true
     end
 
-    context 'with a block' do
-      before :each do
-        subject.add do |b|
-          @box = b
+    context 'with valid parameters' do
+      it 'should return false if no Box was properly added' do
+        subject.add(:aws).should == false
+      end
+
+      it 'should pass a Box instance to the block' do
+        invoked_block = false
+        subject.add(:aws) do |box|
+          invoked_block = true
+          box.should be_instance_of Blimpy::Box
         end
+        invoked_block.should be true
       end
 
-      it 'should add the box the fleet' do
-        @box.should_not be nil
-        subject.ships.should include(@box)
+      context 'with a block' do
+        before :each do
+          subject.add(:aws) do |b|
+            @box = b
+          end
+        end
+
+        it 'should add the box the fleet' do
+          @box.should_not be nil
+          subject.ships.should include(@box)
+        end
       end
     end
   end

@@ -7,7 +7,7 @@ Feature: SCP a file into a named VM
     Given I have the Blimpfile:
       """
       Blimpy.fleet do |f|
-        f.add do |host|
+        f.add(:aws) do |host|
           host.name = 'Cucumber Host'
         end
       end
@@ -27,7 +27,7 @@ Feature: SCP a file into a named VM
     Given I have the Blimpfile:
       """
       Blimpy.fleet do |f|
-        f.add do |host|
+        f.add(:aws) do |host|
           host.name = 'Cucumber Host'
         end
       end

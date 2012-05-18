@@ -13,7 +13,7 @@ Feature: Start a VM or cluster of VMs in the cloud
     Given I have the Blimpfile:
       """
       Blimpy.fleet do |f|
-        f.add do |host|
+        f.add(:aws) do |host|
           host.group = 'Simple'
           host.name = 'Cucumber Host'
         end
@@ -31,7 +31,7 @@ Feature: Start a VM or cluster of VMs in the cloud
     Given I have the Blimpfile:
       """
       Blimpy.fleet do |f|
-        f.add do |host|
+        f.add(:aws) do |host|
           host.group = 'Simple'
           host.name = 'Cucumber Host'
         end

@@ -11,7 +11,14 @@ module Blimpy
       @id = Time.now.utc.to_i
     end
 
-    def add(&block)
+    def valid_types
+      [:aws]
+    end
+
+    def add(box_type, &block)
+      unless valid_types.include? box_type
+        raise Blimpy::InvalidShipException
+      end
       if block.nil?
         return false
       end

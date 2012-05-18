@@ -21,4 +21,6 @@ module Blimpy
   end
   class SSHKeyNotFoundError < Exception
   end
+  class InvalidShipException < Exception
+  end
 end
