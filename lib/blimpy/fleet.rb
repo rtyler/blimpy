@@ -1,4 +1,5 @@
 require 'blimpy/helpers/state'
+require 'blimpy/boxes/aws'
 
 module Blimpy
   class Fleet
@@ -22,7 +23,12 @@ module Blimpy
       if block.nil?
         return false
       end
-      box = Blimpy::Box.new
+
+      box = Blimpy::Boxes::AWS.new
+
+      if box.nil?
+        return false
+      end
       box.fleet_id = @id
       @ships << box
       block.call(box)

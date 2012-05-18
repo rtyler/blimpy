@@ -26,7 +26,7 @@ describe Blimpy::Fleet do
         invoked_block = false
         subject.add(:aws) do |box|
           invoked_block = true
-          box.should be_instance_of Blimpy::Box
+          box.should be_a Blimpy::Box
         end
         invoked_block.should be true
       end
