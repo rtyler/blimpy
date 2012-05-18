@@ -62,9 +62,7 @@ describe Blimpy::Box do
     let(:groups) { double('Fog::Compute::AWS::SecurityGroups') }
 
     before :each do
-      # Fog::Compute[:aws] will return a *new* instance of
-      # Fog::Compute::Aws::Real every time (apparently) it is invoked
-      Fog::Compute::AWS::Real.any_instance.should_receive(:security_groups).and_return(groups)
+      Fog::Compute.stub_chain(:[], :security_groups).and_return(groups)
     end
 
     context 'with invalid settings' do
