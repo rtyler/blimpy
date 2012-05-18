@@ -31,7 +31,7 @@ module Blimpy
     end
 
     def region=(newRegion)
-      unless @allowed_regions.include? newRegion
+      unless (@allowed_regions.nil?) || (@allowed_regions.include?(newRegion))
         raise InvalidRegionError
       end
       @region = newRegion
