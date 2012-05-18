@@ -37,17 +37,15 @@ module Blimpy
       @region = newRegion
     end
 
-    def validate!
-      if Fog::Compute[:aws].security_groups.get(@group).nil?
-        raise BoxValidationError
-      end
-    end
-
     def online!
       File.open(state_file, 'a') do |f|
         f.write("dns: #{@server.dns_name}\n")
         f.write("internal_dns: #{@server.private_dns_name}\n")
       end
+    end
+
+    def validate!
+      raise NotImplementedError, '#validate! should be defined in a subclass of Blimpy::Box'
     end
 
     def start

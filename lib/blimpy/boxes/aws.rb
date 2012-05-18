@@ -21,5 +21,12 @@ module Blimpy::Boxes
       @username = 'ubuntu'
       super(server)
     end
+
+    def validate!
+      if Fog::Compute[:aws].security_groups.get(@group).nil?
+        raise Blimpy::BoxValidationError
+      end
+    end
+
   end
 end
