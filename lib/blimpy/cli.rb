@@ -63,8 +63,8 @@ module Blimpy
       engine.fleet.start
     end
 
-    desc 'list', 'List running blimps'
-    def list
+    desc 'status', 'Show running blimps'
+    def status
       ensure_blimpfile
       blimps = Dir["#{Dir.pwd}/.blimpy.d/*.blimp"]
       if blimps.empty?
