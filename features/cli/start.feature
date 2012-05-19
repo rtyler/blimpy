@@ -26,6 +26,20 @@ Feature: Start a VM or cluster of VMs in the cloud
       Up, up and away!
       """
 
+  Scenario: Start with an invalid Blimpfile
+    Given I have the Blimpfile:
+      """
+        Blimpy.fleet do |f|
+          f.bork
+        end
+      """
+    When I run `blimpy start`
+    Then the exit status should be 1
+    And the output should contain:
+      """
+      The Blimpfile is invalid!
+      """
+
   @slow @destroy
   Scenario: start with a functional Blimpfile
     Given I have the Blimpfile:

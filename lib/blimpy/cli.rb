@@ -62,7 +62,13 @@ module Blimpy
     method_options :"dry-run" => :boolean
     def start
       ensure_blimpfile
-      engine = load_engine
+      begin
+        engine = load_engine
+      rescue Blimpy::InvalidBlimpFileError => e
+        puts "The Blimpfile is invalid!"
+        exit 1
+      end
+
       puts 'Up, up and away!'
 
       if options[:'dry-run']
