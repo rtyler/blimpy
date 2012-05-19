@@ -111,7 +111,7 @@ module Blimpy
 # Blimpfile created on #{Time.now}
 
 Blimpy.fleet do |fleet|
-  fleet.add do |ship|
+  fleet.add(:aws) do |ship|
     ship.name = 'Excelsior'
     ship.group = 'default'
   end
