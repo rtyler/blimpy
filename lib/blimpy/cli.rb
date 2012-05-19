@@ -41,7 +41,7 @@ module Blimpy
 
         engine.fleet.ships.each do |ship|
           next unless ship.name == name
-          ship.server = Blimpy::Box.fog_server_for_instance(id, data)
+          ship.server = ship.class.fog_server_for_instance(id, data)
           box = ship
         end
         box
