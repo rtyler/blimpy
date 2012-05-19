@@ -110,8 +110,9 @@ describe Blimpy::Box do
 
         it 'should tarball up the current directory' do
           Dir.should_receive(:pwd).and_return('mock-pwd')
-          Blimpy::Livery.should_receive(:tarball_directory).with('mock-pwd').and_return('mock-pwd.tar.gz')
-          subject.should_receive(:scp_file).with('mock-pwd.tar.gz')
+          subject.should_receive(:run_command) do |*args|
+            args.first.should == 'rsync'
+          end
           subject.should_receive(:ssh_into)
           subject.bootstrap_livery
         end

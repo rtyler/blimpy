@@ -153,12 +153,15 @@ module Blimpy
     def bootstrap_livery
       tarball = nil
       if livery == :cwd
-        tarball = Blimpy::Livery.tarball_directory(Dir.pwd)
-        scp_file(tarball)
-        # HAXX
-        basename = File.basename(tarball)
+        dir_name = File.basename(Dir.pwd)
+        run_command('rsync', '-av',
+                    '--exclude=.git',
+                    '--exclude=.svn',
+                    '--exclude=.blimpy.d',
+                    '.',
+                    "#{username}@#{dns_name}:#{dir_name}/")
         puts 'Bootstrapping the livery'
-        ssh_into("tar -zxf #{basename} && cd #{File.basename(tarball, '.tar.gz')} && sudo ./bootstrap.sh")
+        ssh_into("cd #{dir_name} && sudo ./bootstrap.sh")
       end
     end
 
@@ -170,7 +173,6 @@ module Blimpy
       # after sshd(8) comes online
       @exec_commands = false
 
-      print "..waiting for sshd on #{@name} to come online"
       until @ssh_connected
         # Run the `true` command and exit
         @ssh_connected = ssh_into('-q', 'true')
