@@ -1,7 +1,7 @@
 # Blimpy
+[![Build Status](https://buildhive.cloudbees.com/job/rtyler/job/blimpy/badge/icon)](https://buildhive.cloudbees.com/job/rtyler/job/blimpy/)
 
 ![Excelsior!](http://strongspace.com/rtyler/public/excelsior.png)
-[![Build Status](https://buildhive.cloudbees.com/job/rtyler/job/blimpy/badge/icon)](https://buildhive.cloudbees.com/job/rtyler/job/blimpy/)
 
 
 ### About
@@ -18,7 +18,7 @@ Here's an example Blimpfile:
 
 ```ruby
     Blimpy.fleet do |fleet|
-        fleet.add do |ship|
+        fleet.add(:aws) do |ship|
             ship.image_id = 'ami-349b495d'
             ship.livery = 'rails'
             ship.group = 'Simple' # [Required] The name of the desired Security Group
