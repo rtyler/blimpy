@@ -22,7 +22,6 @@ module Blimpy
         engine
       end
 
-
       def box_by_name(name)
         engine = load_engine
         box = nil
@@ -46,6 +45,17 @@ module Blimpy
         end
         box
       end
+
+      def current_blimps
+        blimps = Dir["#{Dir.pwd}/.blimpy.d/*.blimp"]
+        return false if blimps.empty?
+
+        data = []
+        blimps.each do |blimp|
+          data << [blimp, YAML.load_file(blimp)]
+        end
+        data
+      end
     end
 
     desc 'start', 'Start up a fleet of blimps'
@@ -66,14 +76,13 @@ module Blimpy
     desc 'status', 'Show running blimps'
     def status
       ensure_blimpfile
-      blimps = Dir["#{Dir.pwd}/.blimpy.d/*.blimp"]
-      if blimps.empty?
+      blimps = current_blimps
+      unless blimps
         puts 'No currently running VMs'
         exit 0
       end
 
-      blimps.each do |blimp|
-        data = YAML.load_file(blimp)
+      blimps.each do |blimp, data|
         instance_id = File.basename(blimp)
         instance_id = instance_id.split('.blimp').first
         puts "#{data['name']} (#{instance_id}) is: online at #{data['dns']}"
@@ -138,12 +147,26 @@ end
     desc 'provision BLIMP_NAME', 'Run the livery again'
     def provision(name=nil)
       ensure_blimpfile
-      box = box_by_name(name)
-      if box.nil?
-        puts "Could not find a blimp named \"#{name}\""
-        exit 1
+      unless name.nil?
+        box = box_by_name(name)
+        if box.nil?
+          puts "Could not find a blimp named \"#{name}\""
+          exit 1
+        end
+        box.bootstrap
+      else
+        blimps = current_blimps
+        unless blimps
+          puts "No Blimps running!"
+          exit 1
+        end
+
+        blimps.each do |blimp, data|
+          next unless data['name']
+          box = box_by_name(data['name'])
+          box.bootstrap
+        end
       end
-      box.bootstrap
     end
   end
 end
