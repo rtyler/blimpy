@@ -23,8 +23,12 @@ module Blimpy::Boxes
     end
 
     def validate!
-      if Fog::Compute[:aws].security_groups.get(@group).nil?
-        raise Blimpy::BoxValidationError
+      if @server.nil?
+        raise Blimpy::BoxValidationError, "Cannot validate without a valid Fog 'server' object"
+      end
+
+      if @server.security_groups.get(@group).nil?
+        raise Blimpy::BoxValidationError, "The security group '#{@group}' does not exist in #{@region}"
       end
     end
   end
