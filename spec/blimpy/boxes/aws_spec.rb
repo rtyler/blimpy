@@ -42,19 +42,23 @@ describe Blimpy::Boxes::AWS do
       group.stub(:name).and_return('MockedGroup')
       group
     end
-    let(:groups) { double('Fog::Compute::AWS::SecurityGroups') }
-    let(:server) do
-      server = mock('Fog::Compute::AWS::Server::Real')
-      server
+    let (:fog) { mock('Fog::Compute::AWS') }
+
+    before :each do
+      subject.stub(:fog).and_return(fog)
     end
 
-    subject do
-      Blimpy::Boxes::AWS.new(server)
+    it 'should raise if no region has been set' do
+      expect {
+        # This may be a silly test
+        subject.instance_variable_set(:@region, nil)
+        subject.validate!
+      }.to raise_error(Blimpy::BoxValidationError)
     end
 
     context 'with invalid settings' do
       it 'should raise with a bad security group' do
-        server.stub_chain(:security_groups, :get).and_return(nil)
+        fog.stub_chain(:security_groups, :get).and_return(nil)
         expect {
           subject.validate!
         }.to raise_error(Blimpy::BoxValidationError)
@@ -63,7 +67,7 @@ describe Blimpy::Boxes::AWS do
 
     context 'with valid settings' do
       it 'should validate with a good security group' do
-        server.stub_chain(:security_groups, :get).with('MockedGroup').and_return(security_group)
+        fog.stub_chain(:security_groups, :get).with('MockedGroup').and_return(security_group)
         expect {
           subject.group = 'MockedGroup'
           subject.validate!

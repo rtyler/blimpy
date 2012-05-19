@@ -23,13 +23,31 @@ module Blimpy::Boxes
     end
 
     def validate!
-      if @server.nil?
-        raise Blimpy::BoxValidationError, "Cannot validate without a valid Fog 'server' object"
+      if @region.nil?
+        raise Blimpy::BoxValidationError, "Cannot spin up machine without a set region"
       end
 
-      if @server.security_groups.get(@group).nil?
+      if fog.security_groups.get(@group).nil?
         raise Blimpy::BoxValidationError, "The security group '#{@group}' does not exist in #{@region}"
       end
+    end
+
+    def fog
+      @fog ||= begin
+        Fog::Compute.new(:provider => 'AWS', :region => @region)
+      end
+    end
+
+    private
+
+    def create_host
+      tags = @tags.merge({:Name => @name, :CreatedBy => 'Blimpy', :BlimpyFleetId => @fleet_id})
+
+      Blimpy::Keys.import_key(fog)
+      fog.servers.create(:image_id => @image_id,
+                          :key_name => Blimpy::Keys.key_name,
+                          :groups => [@group],
+                          :tags => tags)
     end
   end
 end

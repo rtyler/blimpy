@@ -28,6 +28,23 @@ describe Blimpy::Box do
     end
   end
 
+  describe '#create_host' do
+    it 'should raise a NotImplementedError' do
+      # lol private
+      expect {
+        subject.send(:create_host)
+      }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe '#fog' do
+    it 'should raise NotImplementedError' do
+      expect {
+        subject.fog.should be_nil
+      }.to raise_error(NotImplementedError)
+    end
+  end
+
   context 'with a mocked server' do
     let(:server_id) { 'id-0xdeadbeef' }
     let(:server) do

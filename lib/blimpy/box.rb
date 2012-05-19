@@ -188,19 +188,14 @@ module Blimpy
       @exec_commands = use_exec
     end
 
+    def fog
+      raise NotImplementedError, '#fog should be implemented by cloud-specific subclasses'
+    end
+
     private
 
     def create_host
-      tags = @tags.merge({:Name => @name, :CreatedBy => 'Blimpy', :BlimpyFleetId => @fleet_id})
-      if @fog.nil?
-        @fog = Fog::Compute.new(:provider => 'AWS', :region => @region)
-      end
-
-      Blimpy::Keys.import_key(@fog)
-      @fog.servers.create(:image_id => @image_id,
-                          :key_name => Blimpy::Keys.key_name,
-                          :groups => [@group],
-                          :tags => tags)
+      raise NotImplementedError, '#create_host should be implemented by a cloud-specific subclass'
     end
   end
 end
