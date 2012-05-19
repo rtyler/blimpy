@@ -48,7 +48,7 @@ Feature: Start a VM or cluster of VMs in the cloud
       online at:
       """
 
-  @slow @destroy @openstack
+  @slow @destroy @openstack @wip
   Scenario: start with an OpenStack Blimpfile
     Given I have the Blimpfile:
       """
