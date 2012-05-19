@@ -15,11 +15,11 @@ module Blimpy::Boxes
     end
 
     def initialize(server=nil)
+      super(server)
       @allowed_regions = ['us-west-1', 'us-west-2', 'us-east-1']
       @region = DEFAULT_REGION
       @image_id = DEFAULT_IMAGE_ID
       @username = 'ubuntu'
-      super(server)
     end
 
     def validate!
@@ -27,6 +27,5 @@ module Blimpy::Boxes
         raise Blimpy::BoxValidationError
       end
     end
-
   end
 end

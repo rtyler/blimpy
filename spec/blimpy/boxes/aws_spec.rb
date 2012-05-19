@@ -67,27 +67,4 @@ describe Blimpy::Boxes::AWS do
       end
     end
   end
-
-  context 'with a mocked server' do
-    let(:server_id) { 'id-0xdeadbeef' }
-    let(:server) do
-      server = double('Fog::Compute::AWS::Server')
-      server.stub(:id).and_return(server_id)
-      server
-    end
-
-    describe '#from_instance_id' do
-      let(:fog) { double('Fog::Compute') }
-      before :each do
-        fog.stub_chain(:servers, :get).and_return(server)
-        Fog::Compute.should_receive(:new).and_return(fog)
-      end
-
-      it 'should create a new Box instance' do
-        result = Blimpy::Boxes::AWS.from_instance_id('someid', {})
-        result.should be_instance_of Blimpy::Boxes::AWS
-      end
-    end
-  end
-
 end

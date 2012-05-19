@@ -1,6 +1,7 @@
 require 'blimpy/helpers/state'
 require 'blimpy/livery'
 require 'blimpy/keys'
+require 'blimpy/boxes'
 
 module Blimpy
   class Box
@@ -12,9 +13,17 @@ module Blimpy
 
 
     def self.from_instance_id(an_id, data)
-      server = fog_server_for_instance(an_id, data)
+      return if data['type'].nil?
+
+      name = data['type'].upcase.to_sym
+      return unless Blimpy::Boxes.const_defined? name
+
+      klass = Blimpy::Boxes.const_get(name)
+
+      server = klass.fog_server_for_instance(an_id, data)
       return if server.nil?
-      box = self.new(server)
+
+      box = klass.new(server)
       box.name = data['name']
       box
     end
@@ -83,6 +92,9 @@ module Blimpy
 
     def write_state_file
       File.open(state_file, 'w') do |f|
+        # We only really care about the class name as part of the Blimpy::Boxes
+        # module
+        f.write("type: #{self.class.to_s.split('::').last}\n")
         f.write("name: #{@name}\n")
         f.write("region: #{@region}\n")
       end

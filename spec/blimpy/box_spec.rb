@@ -20,7 +20,6 @@ describe Blimpy::Box do
     end
   end
 
-
   describe '#validate!' do
     it 'should raise a NotImplementedError, since this should be defined by subclasses' do
       expect {
@@ -76,6 +75,32 @@ describe Blimpy::Box do
       end
     end
 
+    describe '#from_instance_id' do
+      let(:fog) { double('Fog::Compute') }
+
+      it 'should fail if no "type" exists' do
+        result = Blimpy::Box.from_instance_id('someid', {})
+        result.should be_nil
+      end
+
+      it 'should fail if the "type" is not a defined Box class' do
+        result = Blimpy::Box.from_instance_id('someid', {'type' => 'MAGIC'})
+        result.should be_nil
+      end
+
+      context 'with an AWS box type' do
+        before :each do
+          fog.stub_chain(:servers, :get).and_return(server)
+          Fog::Compute.should_receive(:new).and_return(fog)
+        end
+
+        it 'should create a new AWS Box instance' do
+          result = Blimpy::Box.from_instance_id('someid', {'type' => 'AWS'})
+          result.should be_instance_of Blimpy::Boxes::AWS
+        end
+      end
+
+    end
 
     describe '#bootstrap_livery' do
       context 'with a livery of :cwd' do
