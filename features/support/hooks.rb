@@ -1,7 +1,6 @@
 Before do
   @cwd = Dir.pwd
   @tempdir = TempDir.create(:basename => 'blimpy_test')
-  puts "Using tempdir: #{@tempdir}"
   Dir.chdir(@tempdir)
   @dirs = [@tempdir]
 end
