@@ -8,8 +8,8 @@ module Blimpy
     include Blimpy::Helpers::State
 
     attr_reader :allowed_regions, :region
-    attr_accessor :image_id, :livery, :group, :server
-    attr_accessor :name, :tags, :fleet_id, :username
+    attr_accessor :image_id, :flavor, :group
+    attr_accessor :name, :tags, :fleet_id, :username, :livery
 
 
     def self.from_instance_id(an_id, data)
