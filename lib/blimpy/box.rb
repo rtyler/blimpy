@@ -1,6 +1,7 @@
 require 'blimpy/helpers/state'
 require 'blimpy/livery'
 require 'blimpy/keys'
+require 'blimpy/securitygroups'
 require 'blimpy/boxes'
 
 module Blimpy
@@ -8,7 +9,7 @@ module Blimpy
     include Blimpy::Helpers::State
 
     attr_reader :allowed_regions, :region
-    attr_accessor :image_id, :flavor, :group
+    attr_accessor :image_id, :flavor, :group, :ports
     attr_accessor :name, :tags, :fleet_id, :username, :livery
 
 
@@ -33,6 +34,7 @@ module Blimpy
       @group = nil
       @name = 'Unnamed Box'
       @tags = {}
+      @ports = []
       @server = server
       @fleet_id = 0
       @ssh_connected = false

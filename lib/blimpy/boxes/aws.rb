@@ -46,10 +46,12 @@ module Blimpy::Boxes
       tags = @tags.merge({:Name => @name, :CreatedBy => 'Blimpy', :BlimpyFleetId => @fleet_id})
 
       Blimpy::Keys.import_key(fog)
+      generated_group = Blimpy::SecurityGroups.ensure_group(fog, @ports + [22])
+      groups = [@group, generated_group].compact
       fog.servers.create(:image_id => @image_id,
                          :flavor_id => @flavor,
                          :key_name => Blimpy::Keys.key_name,
-                         :groups => [@group],
+                         :groups => groups,
                          :tags => tags)
     end
   end
