@@ -5,6 +5,35 @@
 
 
 ### About
+
+Blimpy is a tool to help developers spin up and utilize machines "in the
+cloud."
+
+Once a developer has a Blimpfile, they can execute a few simple commands to
+manage the newly created "fleet" in the specified cloud provider:
+
+```
+   % blimpy start
+   [snip]
+   >> excelsior ..... online at: ec2-50-112-3-57.us-west-2.compute.amazonaws.com..
+   >> goodyear ..... online at: ec2-50-112-27-89.us-west-2.compute.amazonaws.com
+   %
+```
+
+Once machines are online, they're easy to access by name with:
+
+```
+  % blimpy scp goodyear secrets.tar.gz
+  % blimpy ssh goodyear
+```
+
+Then once you're finished working with the machines a simple `blimpy destroy`
+will terminate the machines.
+
+---
+
+(Inspired by [Vagrant](http://vagrantup.com))
+
 Notes and other bits are being stored in [this public Evernote
 notebook](https://www.evernote.com/pub/agentdero/blimpy).
 
@@ -19,11 +48,11 @@ Here's an example Blimpfile:
 ```ruby
     Blimpy.fleet do |fleet|
         fleet.add(:aws) do |ship|
-            ship.image_id = 'ami-349b495d'
-            ship.livery = 'rails'
+            ship.name = 'rails-app'
+            ship.image_id = 'ami-349b495d' # optional, defaults to Ubuntu 10.04 64-bit
+            ship.livery = 'rails' # optional
             ship.group = 'Simple' # [Required] The name of the desired Security Group
-            ship.region = 'us-west-1'
-            ship.name = 'Rails App Server'
+            ship.region = 'us-west-1' # optional, defaults to us-west-2
         end
     end
 ```
