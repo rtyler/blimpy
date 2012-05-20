@@ -45,6 +45,31 @@ describe Blimpy::Box do
     end
   end
 
+  describe '#with_data' do
+    context 'with valid data' do
+      let(:data) do
+        {'type' => 'AWS',
+         'name' => 'Fakey',
+         'region' => 'us-west-2',
+         'dns' => 'ec2-50-112-24-134.us-west-2.compute.amazonaws.com',
+         'internal_dns' => 'ip-10-252-73-124.us-west-2.compute.internal'}
+      end
+      let(:ship_id) { 'i-deadbeef' }
+
+      before :each do
+        subject.with_data(ship_id, data)
+      end
+
+      it 'should set the dns_name' do
+        subject.dns_name.should == data['dns']
+      end
+
+      it 'should set the region' do
+        subject.region.should == data['region']
+      end
+    end
+  end
+
   context 'with a mocked server' do
     let(:server_id) { 'id-0xdeadbeef' }
     let(:server) do

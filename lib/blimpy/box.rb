@@ -118,9 +118,20 @@ module Blimpy
       end
     end
 
+
+    def with_data(ship_id, data)
+      @dns = data['dns']
+      @region = data['region']
+    end
+
     def dns_name
-      return @server.dns_name unless @server.nil?
-      'no name'
+      @dns ||= begin
+          if @server.nil?
+            'no name'
+          else
+            @server.dns_name
+          end
+        end
     end
 
     def internal_dns_name
@@ -177,7 +188,7 @@ module Blimpy
         @ssh_connected = ssh_into('-q', 'true')
 
         unless @ssh_connected
-          if (Time.now.to_i - start) < 30
+          if (Time.now.to_i - start) < 60
             print '.'
             sleep 1
           end

@@ -25,25 +25,24 @@ module Blimpy
       def box_by_name(name)
         engine = load_engine
         box = nil
-        id = nil
+        ship_id = nil
         data = nil
         engine.fleet.members.each do |instance_id, instance_data|
           next unless instance_data['name'] == name
-          id = instance_id
+          ship_id = instance_id
           data = instance_data
           break
         end
 
-        if id.nil?
+        if ship_id.nil?
           return nil
         end
 
         engine.fleet.ships.each do |ship|
           next unless ship.name == name
-          ship.server = ship.class.fog_server_for_instance(id, data)
-          box = ship
+          ship.with_data(ship_id, data)
+          return ship
         end
-        box
       end
 
       def current_blimps
