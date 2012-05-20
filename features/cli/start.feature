@@ -23,7 +23,7 @@ Feature: Start a VM or cluster of VMs in the cloud
     Then the exit status should be 0
     And the output should contain:
       """
-      Up, up and away!
+      skipping actually starting the fleet
       """
 
   Scenario: Start with an invalid Blimpfile
@@ -53,10 +53,6 @@ Feature: Start a VM or cluster of VMs in the cloud
       """
     When I run `blimpy start`
     Then the exit status should be 0
-    And the output should contain:
-      """
-      Up, up and away!
-      """
     And the output should contain:
       """
       online at:
