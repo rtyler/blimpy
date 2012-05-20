@@ -116,7 +116,7 @@ module Blimpy
 Blimpy.fleet do |fleet|
   fleet.add(:aws) do |ship|
     ship.name = 'Excelsior'
-    ship.group = 'default'
+    ship.ports = [22, 8080]
   end
 end
 """)
