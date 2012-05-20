@@ -69,8 +69,6 @@ module Blimpy
         exit 1
       end
 
-      puts 'Up, up and away!'
-
       if options[:'dry-run']
         puts 'skipping actually starting the fleet'
         exit 0

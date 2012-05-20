@@ -10,6 +10,7 @@ module Blimpy
     def initialize
       @ships = []
       @id = Time.now.utc.to_i
+      @airborn = false
     end
 
     def valid_types
@@ -60,6 +61,37 @@ module Blimpy
       puts
     end
 
+    def animate
+      buffer ="""
+            _..--=--..._
+          .-'            '-.  .-.
+        /.'              '.\\/  /
+        |=-  B L I M P Y   -=| (
+        \\'.              .'/\\  \\
+          '-.,_____ _____.-'  '-'
+              [_____]=+ ~ ~"""
+      frames = [
+        'x~   ',
+        'x ~  ',
+        '+~ ~ ',
+        '+ ~ ~',
+        '+  ~ ',
+        'x   ~',
+      ]
+
+      print buffer
+      $stdout.flush
+      until @airborn do
+        frames.each do |frame|
+          # Reset every frame
+          5.times { print "\b" }
+          print frame
+          $stdout.flush
+          sleep 0.2
+        end
+      end
+    end
+
     def start
       instances = members
       unless instances.empty?
@@ -71,16 +103,19 @@ module Blimpy
         host.validate!
       end
 
-      puts '>> Starting:'
+      Thread.new do
+        animate
+      end
+
       @ships.each do |host|
-        puts "..#{host.name}"
         host.start
       end
 
       @ships.each do |host|
-        print ">> #{host.name} "
-        host.wait_for_state('running') { print '.' }
-        print ".. online at: #{host.dns_name}"
+        host.wait_for_state('running') {  }
+        @airborn = true
+        print "\n"
+        puts ">> #{host.name} online at: #{host.dns_name}"
         host.online!
         host.bootstrap
         puts

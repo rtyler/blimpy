@@ -151,7 +151,6 @@ module Blimpy
     end
 
     def bootstrap_livery
-      tarball = nil
       if livery == :cwd
         dir_name = File.basename(Dir.pwd)
         run_command('rsync', '-av',
