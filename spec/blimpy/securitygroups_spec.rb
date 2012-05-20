@@ -49,7 +49,6 @@ describe Blimpy::SecurityGroups do
       fog.stub_chain(:security_groups, :create).and_return(group)
       group.should_receive(:authorize_port_range).with(22..22)
       group.should_receive(:authorize_port_range).with(8080..8080)
-      group.should_receive(:save)
       subject.create_group(fog, ports)
     end
   end

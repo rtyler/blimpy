@@ -15,6 +15,7 @@ module Blimpy
 
     def self.ensure_group(fog, ports)
       name = group_id(ports)
+      ports = Set.new(ports)
 
       exists = fog.security_groups.get(name)
 
@@ -27,11 +28,10 @@ module Blimpy
     def self.create_group(fog, ports)
       name = group_id(ports)
       group = fog.security_groups.create(:name => name,
-                                         :description => "Custom Blimpy security group for #{ports.inspect}")
+                                         :description => "Custom Blimpy security group for #{ports.to_a}")
       ports.each do |port|
         group.authorize_port_range(port .. port)
       end
-      group.save
     end
   end
 end
