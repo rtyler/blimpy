@@ -20,6 +20,8 @@ module Blimpy::Boxes
       @region = DEFAULT_REGION
       @image_id = DEFAULT_IMAGE_ID
       @username = 'ubuntu'
+      @flavor = 't1.micro'
+      @group = 'default'
     end
 
     def validate!
@@ -45,9 +47,10 @@ module Blimpy::Boxes
 
       Blimpy::Keys.import_key(fog)
       fog.servers.create(:image_id => @image_id,
-                          :key_name => Blimpy::Keys.key_name,
-                          :groups => [@group],
-                          :tags => tags)
+                         :flavor_id => @flavor,
+                         :key_name => Blimpy::Keys.key_name,
+                         :groups => [@group],
+                         :tags => tags)
     end
   end
 end

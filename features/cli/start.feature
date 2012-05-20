@@ -62,6 +62,20 @@ Feature: Start a VM or cluster of VMs in the cloud
       online at:
       """
 
+  @slow @destroy
+  Scenario: Start a bigger instance
+    Given I have the Blimpfile:
+      """
+      Blimpy.fleet do |f|
+        f.add(:aws) do |host|
+          host.name = 'Cucumber Host'
+          host.flavor = 'm1.large'
+        end
+      end
+      """
+    When I run `blimpy start`
+    Then the exit status should be 0
+
   @slow @destroy @openstack @wip
   Scenario: start with an OpenStack Blimpfile
     Given I have the Blimpfile:
