@@ -22,7 +22,7 @@ Feature: SCP a file into a named VM
 
   # This test is in the same boat that the complimentary test in ssh.feature is
   # in.
-  @slow @destroy @wip
+  @slow @destroy
   Scenario: SCPing a valid file
     Given I have the Blimpfile:
       """
@@ -33,5 +33,6 @@ Feature: SCP a file into a named VM
       end
       """
     And I have a file named "hello.txt"
+    And I run `blimpy start`
     When I run `blimpy scp "Cucumber Host" hello.txt`
     Then the exit status should be 0
