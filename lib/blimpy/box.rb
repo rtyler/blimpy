@@ -152,7 +152,9 @@ module Blimpy
     def ssh_into(*args)
       # Support using #ssh_into within our own code as well to pass arguments
       # to the ssh(1) binary
-      args = args || ARGV[2 .. -1]
+      if args.empty?
+        args = ARGV[2 .. -1]
+      end
       run_command('ssh', '-o', 'StrictHostKeyChecking=no',
                   '-l', username, dns_name, *args)
     end
