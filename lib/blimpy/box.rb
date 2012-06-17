@@ -168,7 +168,7 @@ module Blimpy
     def bootstrap_livery
       if livery == :cwd
         dir_name = File.basename(Dir.pwd)
-        run_command('rsync', '-av',
+        run_command('rsync', '-avL',
                     '--exclude=.git',
                     '--exclude=.svn',
                     '--exclude=.blimpy.d',
