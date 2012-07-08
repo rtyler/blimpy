@@ -175,7 +175,11 @@ module Blimpy
                     '.',
                     "#{username}@#{dns_name}:#{dir_name}/")
         puts 'Bootstrapping the livery'
-        ssh_into("cd #{dir_name} && sudo ./bootstrap.sh")
+        run_sudo = 'sudo'
+        if username == 'root'
+          run_sudo = ''
+        end
+        ssh_into("cd #{dir_name} && #{run_sudo} ./bootstrap.sh")
       end
     end
 
