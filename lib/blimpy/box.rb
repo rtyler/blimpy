@@ -224,7 +224,7 @@ module Blimpy
     end
 
     def can_rsync?
-      @can_rsync ||= ssh_into('-q', 'which rsync')
+      @can_rsync ||= ssh_into('-q', 'which rsync > /dev/null')
     end
 
 
