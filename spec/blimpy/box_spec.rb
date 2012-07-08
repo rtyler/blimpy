@@ -148,6 +148,7 @@ describe Blimpy::Box do
       context 'with a livery of :cwd' do
         before :each do
           subject.livery = :cwd
+          subject.stub(:can_rsync?).and_return(true)
         end
 
         it 'should tarball up the current directory' do

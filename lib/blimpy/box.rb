@@ -167,19 +167,32 @@ module Blimpy
 
     def bootstrap_livery
       if livery == :cwd
+        unpack_command = 'true'
         dir_name = File.basename(Dir.pwd)
-        run_command('rsync', '-avL',
-                    '--exclude=.git',
-                    '--exclude=.svn',
-                    '--exclude=.blimpy.d',
-                    '.',
-                    "#{username}@#{dns_name}:#{dir_name}/")
+
+        if can_rsync?
+          unpack_command = "cd #{dir_name}"
+          run_command('rsync', '-avL',
+                      '--exclude=.git',
+                      '--exclude=.svn',
+                      '--exclude=.blimpy.d',
+                      '.',
+                      "#{username}@#{dns_name}:#{dir_name}/")
+        else
+          puts "Remote host has no rsync(1), falling back to copying a full tarball over"
+          tarball = Blimpy::Livery.tarball_directory(Dir.pwd)
+          scp_file(tarball)
+          # HAXX
+          basename = File.basename(tarball)
+          unpack_command = "tar -zxf #{basename} && cd #{dir_name}"
+        end
+
         puts 'Bootstrapping the livery'
         run_sudo = 'sudo'
         if username == 'root'
           run_sudo = ''
         end
-        ssh_into("cd #{dir_name} && #{run_sudo} ./bootstrap.sh")
+        ssh_into("#{unpack_command} && #{run_sudo} ./bootstrap.sh")
       end
     end
 
@@ -209,6 +222,11 @@ module Blimpy
     def fog
       raise NotImplementedError, '#fog should be implemented by cloud-specific subclasses'
     end
+
+    def can_rsync?
+      @can_rsync ||= ssh_into('-q', 'which rsync')
+    end
+
 
     private
 
