@@ -159,41 +159,51 @@ module Blimpy
                   '-l', username, dns_name, *args)
     end
 
-    def scp_file(filename)
+    def scp_file(filename, directory='')
       filename = File.expand_path(filename)
       run_command('scp', '-o', 'StrictHostKeyChecking=no',
-                  filename, "#{username}@#{dns_name}:", *ARGV[3..-1])
+                  filename, "#{username}@#{dns_name}:#{directory}", *ARGV[3..-1])
     end
 
     def bootstrap_livery
+      script = File.expand_path(File.dirname(__FILE__) + "/../../scripts/#{livery}.sh")
+
       if livery == :cwd
-        unpack_command = 'true'
-        dir_name = File.basename(Dir.pwd)
-
-        if can_rsync?
-          unpack_command = "cd #{dir_name}"
-          run_command('rsync', '-avL',
-                      '--exclude=.git',
-                      '--exclude=.svn',
-                      '--exclude=.blimpy.d',
-                      '.',
-                      "#{username}@#{dns_name}:#{dir_name}/")
-        else
-          puts "Remote host has no rsync(1), falling back to copying a full tarball over"
-          tarball = Blimpy::Livery.tarball_directory(Dir.pwd)
-          scp_file(tarball)
-          # HAXX
-          basename = File.basename(tarball)
-          unpack_command = "tar -zxf #{basename} && cd #{dir_name}"
-        end
-
-        puts 'Bootstrapping the livery'
-        run_sudo = 'sudo'
-        if username == 'root'
-          run_sudo = ''
-        end
-        ssh_into("#{unpack_command} && #{run_sudo} ./bootstrap.sh")
+        script = File.join(Dir.pwd, '/bootstrap.sh')
       end
+
+      unless File.exists?(script)
+        puts "Could not find `#{script}` which is needed to kick-start the machine"
+        return
+      end
+
+      unpack_command = 'true'
+      dir_name = File.basename(Dir.pwd)
+
+      if can_rsync?
+        unpack_command = "cd #{dir_name}"
+        run_command('rsync', '-avL',
+                    '--exclude=.git',
+                    '--exclude=.svn',
+                    '--exclude=.blimpy.d',
+                    '.',
+                    "#{username}@#{dns_name}:#{dir_name}/")
+      else
+        puts "Remote host has no rsync(1), falling back to copying a full tarball over"
+        tarball = Blimpy::Livery.tarball_directory(Dir.pwd)
+        scp_file(tarball)
+        # HAXX
+        basename = File.basename(tarball)
+        ssh_into("tar -zxf #{basename} && cd #{dir_name}")
+      end
+
+      puts 'Bootstrapping the livery'
+      run_sudo = 'sudo'
+      if username == 'root'
+        run_sudo = ''
+      end
+      scp_file(script, dir_name)
+      ssh_into("cd #{dir_name} && #{run_sudo} ./#{File.basename(script)}")
     end
 
     def wait_for_sshd

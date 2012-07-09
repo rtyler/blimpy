@@ -141,25 +141,6 @@ describe Blimpy::Box do
           result.should be_instance_of Blimpy::Boxes::AWS
         end
       end
-
-    end
-
-    describe '#bootstrap_livery' do
-      context 'with a livery of :cwd' do
-        before :each do
-          subject.livery = :cwd
-          subject.stub(:can_rsync?).and_return(true)
-        end
-
-        it 'should tarball up the current directory' do
-          Dir.should_receive(:pwd).and_return('mock-pwd')
-          subject.should_receive(:run_command) do |*args|
-            args.first.should == 'rsync'
-          end
-          subject.should_receive(:ssh_into)
-          subject.bootstrap_livery
-        end
-      end
     end
   end
 end
