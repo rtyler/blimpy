@@ -28,7 +28,7 @@ module Blimpy
       return if server.nil?
 
       box = klass.new(server)
-      box.name = data[:name]
+      box.with_data(an_id, data)
       box
     end
 
