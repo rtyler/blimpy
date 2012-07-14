@@ -16,7 +16,11 @@ namespace :cucumber do
   end
 
   Cucumber::Rake::Task.new('integration') do |t|
-    t.cucumber_opts = cucumber_opts + ' --tags @slow'
+    t.cucumber_opts = cucumber_opts + ' --tags @slow --tags ~@openstack'
+  end
+
+  Cucumber::Rake::Task.new('openstack') do |t|
+    t.cucumber_opts = cucumber_opts + ' --tags @openstack'
   end
 end
 
