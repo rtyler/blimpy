@@ -1,6 +1,7 @@
 
 require 'rubygems'
-require 'fog'
+require 'fog/core'
+require 'fog/compute'
 
 module Blimpy
   class Engine

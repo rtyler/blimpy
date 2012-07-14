@@ -1,4 +1,3 @@
-require 'fog'
 require 'socket'
 
 module Blimpy
