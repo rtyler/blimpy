@@ -93,11 +93,19 @@ module Blimpy
       end
     end
 
+    def predestroy
+    end
+
     def destroy
       unless @server.nil?
+        predestroy
         @server.destroy
+        postdestroy
         File.unlink(state_file)
       end
+    end
+
+    def postdestroy
     end
 
     def write_state_file

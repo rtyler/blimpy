@@ -1,6 +1,18 @@
 require 'spec_helper'
 require 'blimpy/boxes/openstack'
 
+shared_context 'valid floating_ip' do
+  let(:floating) do
+    floating = double('FloatingIp')
+    floating.stub(:address).and_return('127.0.0.1')
+    floating.stub(:id).and_return(7)
+    floating
+  end
+  before :each do
+    subject.stub(:floating_ip).and_return(floating)
+  end
+end
+
 describe Blimpy::Boxes::OpenStack do
   describe '#image_id' do
     it 'should be nil by default' do
@@ -161,11 +173,7 @@ describe Blimpy::Boxes::OpenStack do
 
   describe '#associate_ip' do
     let(:fog) { double('Fog') }
-    let(:floating) do
-      floating = double('FloatingIp')
-      floating.stub(:address).and_return('127.0.0.1')
-      floating
-    end
+    include_context 'valid floating_ip'
     let(:image_id) { 'fake-id' }
 
     before :each do
@@ -174,6 +182,7 @@ describe Blimpy::Boxes::OpenStack do
     end
 
     it 'should raise an exception if a floating IP hasn\'t been created' do
+      subject.stub(:floating_ip).and_return(nil)
       expect {
         subject.associate_ip
       }.to raise_error(Blimpy::UnknownError)
@@ -187,7 +196,6 @@ describe Blimpy::Boxes::OpenStack do
       end
 
       it 'should associate the right IP to the right instance ID' do
-        subject.stub(:floating_ip).and_return(floating)
         fog.should_receive(:associate_address).with(image_id, floating.address).and_return(response)
         subject.associate_ip
       end
@@ -206,6 +214,82 @@ describe Blimpy::Boxes::OpenStack do
         expect {
           subject.associate_ip
         }.to raise_error(Blimpy::UnknownError)
+      end
+    end
+  end
+
+  describe '#predestroy' do
+    context 'if the server has a floating IP' do
+      include_context 'valid floating_ip'
+
+      it 'should disasscoaite it' do
+        subject.should_receive(:disassociate_ip)
+        subject.predestroy
+      end
+    end
+
+    context 'if the server has no floating IP' do
+      it 'should not try to disassociate it' do
+        subject.should_receive(:disassociate_ip).never
+        subject.predestroy
+      end
+    end
+  end
+
+  describe '#postdestroy' do
+    context 'if the server has a floating IP' do
+      include_context 'valid floating_ip'
+
+      it 'should deallocate the IP' do
+        subject.should_receive(:deallocate_ip)
+        subject.postdestroy
+      end
+    end
+
+    context 'if the server has no floating IP' do
+      it 'should not try to deallocate the IP' do
+        subject.should_receive(:deallocate_ip).never
+        subject.postdestroy
+      end
+    end
+  end
+
+  describe '#disassociate_ip' do
+    let(:fog) { double('Fog') }
+    include_context 'valid floating_ip'
+    let(:image_id) { 'fake-id' }
+
+    before :each do
+      subject.stub(:fog).and_return(fog)
+      subject.stub(:image_id).and_return(image_id)
+    end
+
+    it 'should disassociate the right IP to the right instance ID' do
+      fog.should_receive(:disassociate_address).with(image_id, floating.address)
+      subject.disassociate_ip
+    end
+  end
+
+  describe '#deallocate_ip' do
+    let(:fog) { double('Fog') }
+    include_context 'valid floating_ip'
+    let(:image_id) { 'fake-id' }
+
+    before :each do
+      subject.stub(:fog).and_return(fog)
+      subject.stub(:image_id).and_return(image_id)
+    end
+
+    context 'with a good response' do
+      let(:response) do
+        response = double('Excon::Response')
+        response.stub(:status).and_return(202)
+        response
+      end
+
+      it 'should release the right IP by floating_ip ID' do
+        fog.should_receive(:release_address).with(floating.id).and_return(response)
+        subject.deallocate_ip
       end
     end
   end

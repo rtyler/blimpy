@@ -105,6 +105,22 @@ module Blimpy::Boxes
       end
     end
 
+    def predestroy
+      disassociate_ip unless floating_ip.nil?
+    end
+
+    def disassociate_ip
+      fog.disassociate_address(image_id, floating_ip.address)
+    end
+
+    def postdestroy
+      deallocate_ip unless floating_ip.nil?
+    end
+
+    def deallocate_ip
+      fog.release_address(floating_ip.id)
+    end
+
     private
 
     def import_key
@@ -120,7 +136,7 @@ module Blimpy::Boxes
 
       groups = [@group]
       import_key
-      fog.servers.create(:image_ref => @image_id,
+      fog.servers.create(:image_ref => image_id,
                          :flavor_ref => flavor_id(@flavor),
                          :key_name => Blimpy::Keys.key_name,
                          :groups => groups,
