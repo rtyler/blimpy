@@ -4,7 +4,7 @@ require 'blimpy/boxes'
 module Blimpy::Boxes
   class OpenStack < Blimpy::Box
     def self.fog_server_for_instance(id, blimpdata)
-      region = blimpdata['region']
+      region = blimpdata[:region]
       fog = Fog::Compute.new(:provider => 'OpenStack', :openstack_tenant => region)
       fog.servers.get(id)
     end
