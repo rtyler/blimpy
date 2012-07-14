@@ -13,6 +13,8 @@ module Blimpy
     fleet
   end
 
+  class UnknownError < Exception
+  end
   class InvalidBlimpFileError < Exception
   end
   class InvalidRegionError < Exception

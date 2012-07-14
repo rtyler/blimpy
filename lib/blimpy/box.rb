@@ -59,10 +59,18 @@ module Blimpy
       raise NotImplementedError, '#validate! should be defined in a subclass of Blimpy::Box'
     end
 
+    def prestart
+    end
+
     def start
       ensure_state_folder
+      prestart
       @server = create_host
+      poststart
       write_state_file
+    end
+
+    def poststart
     end
 
     def bootstrap

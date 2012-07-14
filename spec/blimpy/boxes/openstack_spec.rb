@@ -97,5 +97,116 @@ describe Blimpy::Boxes::OpenStack do
       end
 
     end
+
+  end
+
+  describe '#prestart' do
+    it 'should allocate an IP' do
+      subject.should_receive(:allocate_ip)
+      subject.prestart
+    end
+  end
+
+  describe '#poststart' do
+    it 'should associate the IP' do
+      subject.should_receive(:associate_ip)
+      subject.poststart
+    end
+  end
+
+  describe '#allocate_ip' do
+    let(:fog) { double('Fog') }
+
+    before :each do
+      subject.stub(:fog).and_return(fog)
+    end
+
+    context 'with a bad response' do
+      let(:response) do
+        response = double('Excon::Response')
+        response.stub(:status).and_return(500)
+        response
+      end
+
+      it 'should raise an error if we cannot allocate the IP' do
+        fog.should_receive(:allocate_address).and_return(response)
+        expect {
+          subject.allocate_ip
+        }.to raise_error(Blimpy::UnknownError)
+      end
+    end
+
+    context 'with a good response' do
+      let(:response) do
+        response = double('Excon::Response')
+        response.stub(:status).and_return(200)
+        response.stub(:body).and_return({"floating_ip"=>
+            {"instance_id"=>nil,
+            "ip"=>"10.38.12.109",
+            "fixed_ip"=>nil,
+            "id"=>109,
+            "pool"=>"nova"}})
+        response
+      end
+
+      it 'should allocate and store the floating IP info' do
+        fog.should_receive(:allocate_address).and_return(response)
+
+        subject.allocate_ip
+        subject.floating_ip.address.should == '10.38.12.109'
+        subject.floating_ip.id.should == 109
+      end
+    end
+  end
+
+  describe '#associate_ip' do
+    let(:fog) { double('Fog') }
+    let(:floating) do
+      floating = double('FloatingIp')
+      floating.stub(:address).and_return('127.0.0.1')
+      floating
+    end
+    let(:image_id) { 'fake-id' }
+
+    before :each do
+      subject.stub(:fog).and_return(fog)
+      subject.stub(:image_id).and_return(image_id)
+    end
+
+    it 'should raise an exception if a floating IP hasn\'t been created' do
+      expect {
+        subject.associate_ip
+      }.to raise_error(Blimpy::UnknownError)
+    end
+
+    context 'with a good response' do
+      let(:response) do
+        response = double('Excon::Response')
+        response.stub(:status).and_return(202)
+        response
+      end
+
+      it 'should associate the right IP to the right instance ID' do
+        subject.stub(:floating_ip).and_return(floating)
+        fog.should_receive(:associate_address).with(image_id, floating.address).and_return(response)
+        subject.associate_ip
+      end
+    end
+
+    context 'with a bad response' do
+      let(:response) do
+        response = double('Excon::Response')
+        response.stub(:status).and_return(500)
+        response
+      end
+
+      it 'should raise an error' do
+        subject.stub(:floating_ip).and_return(floating)
+        fog.should_receive(:associate_address).with(image_id, floating.address).and_return(response)
+        expect {
+          subject.associate_ip
+        }.to raise_error(Blimpy::UnknownError)
+      end
+    end
   end
 end

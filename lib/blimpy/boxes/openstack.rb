@@ -9,7 +9,17 @@ module Blimpy::Boxes
       fog.servers.get(id)
     end
 
-    attr_accessor :key_name
+
+    class FloatingIp
+      attr_accessor :address, :id
+
+      def initialize(address, id)
+        @address = address
+        @id = id
+      end
+    end
+
+    attr_accessor :key_name, :floating_ip
 
     def initialize(server=nil)
       super(server)
@@ -17,6 +27,7 @@ module Blimpy::Boxes
       @flavor = 'm1.tiny'
       @group = 'default'
       @key_name = nil
+      @floating_ip = nil
     end
 
     def ports=(new_pors)
@@ -63,6 +74,35 @@ module Blimpy::Boxes
         return flavor.id if flavor.name == name
       end
       nil
+    end
+
+    def prestart
+      allocate_ip
+    end
+
+    def poststart
+      associate_ip
+    end
+
+    def allocate_ip
+      response = fog.allocate_address
+      unless response.status == 200
+        raise Blimpy::UnknownError, "Blimpy was unable to allocate a floating IP address; #{response.inspect}"
+      end
+
+      details = response.body['floating_ip']
+      @floating_ip = FloatingIp.new(details['ip'], details['id'])
+    end
+
+    def associate_ip
+      if floating_ip.nil?
+        raise Blimpy::UnknownError, "Blimpy cannot associate a floating IP until it's been allocated properly!"
+      end
+      response = fog.associate_address(image_id, floating_ip.address)
+
+      unless response.status == 202
+        raise Blimpy::UnknownError, "Blimpy failed to associate the IP somehow #{response.inspect}"
+      end
     end
 
     private
