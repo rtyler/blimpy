@@ -67,13 +67,22 @@ module Blimpy::Boxes
 
     private
 
+    def import_key
+      material = Blimpy::Keys.public_key
+      begin
+        fog.create_key_pair(Blimpy::Keys.key_name, material)
+      rescue Excon::Errors::Conflict => e
+      end
+    end
+
     def create_host
       tags = @tags.merge({:Name => @name, :CreatedBy => 'Blimpy', :BlimpyFleetId => @fleet_id})
 
       groups = [@group]
+      import_key
       fog.servers.create(:image_ref => @image_id,
                          :flavor_ref => flavor_id(@flavor),
-                         :key_name => @key_name,
+                         :key_name => Blimpy::Keys.key_name,
                          :groups => groups,
                          :name => @name,
                          :tags => tags)

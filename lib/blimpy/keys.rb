@@ -3,7 +3,7 @@ require 'socket'
 
 module Blimpy
   module Keys
-    def self.import_key(fog)
+    def self.public_key
       filename = File.expand_path('~/.ssh/id_rsa.pub')
       unless File.exists? filename
         filename = File.expand_path('~/.ssh/id_dsa.pub')
@@ -12,15 +12,11 @@ module Blimpy
         end
       end
 
-      material = File.open(filename, 'r').read
-      begin
-        fog.import_key_pair(key_name, material)
-      rescue Fog::Compute::AWS::Error => e
-      end
+      File.open(filename, 'r').read
     end
 
     def self.key_name
-      "Blimpy-#{ENV['USER']}@#{Socket.gethostname}"
+      "Blimpy-#{ENV['USER']}-#{Socket.gethostname}"
     end
   end
 end

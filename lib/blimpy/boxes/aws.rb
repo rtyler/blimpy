@@ -42,10 +42,18 @@ module Blimpy::Boxes
 
     private
 
+    def import_key
+      material = Blimpy::Keys.public_key
+      begin
+        fog.import_key_pair(Blimpy::Keys.key_name, material)
+      rescue Fog::Compute::AWS::Error => e
+      end
+    end
+
     def create_host
       tags = @tags.merge({:Name => @name, :CreatedBy => 'Blimpy', :BlimpyFleetId => @fleet_id})
 
-      Blimpy::Keys.import_key(fog)
+      import_key
       generated_group = Blimpy::SecurityGroups.ensure_group(fog, @ports + [22])
       groups = [@group, generated_group].compact
       fog.servers.create(:image_id => @image_id,
