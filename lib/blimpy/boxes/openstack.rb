@@ -42,22 +42,22 @@ module Blimpy::Boxes
         sleep 1
         @server.reload
       end
+      # OpenStack doesn't seem to like it if you try to associate the IP
+      # address too early, but will properly associate it after the machine is
+      # ready
+      associate_ip
     end
 
     def serializable_attributes
-      super + [:network]
-    end
-
-    def network
-      floating_ip
-    end
-
-    def network=(floating_hash)
-      floating_ip = FloatingIp.new(floating_hash['address'], floating_hash['id'])
+      super + [:floating_ip]
     end
 
     def dns
-      'unavailable'
+      if floating_ip.nil?
+        'unavailable'
+      else
+        floating_ip.address
+      end
     end
 
     def internal_dns
@@ -95,10 +95,6 @@ module Blimpy::Boxes
       allocate_ip
     end
 
-    def poststart
-      associate_ip
-    end
-
     def allocate_ip
       response = fog.allocate_address
       unless response.status == 200
@@ -113,7 +109,7 @@ module Blimpy::Boxes
       if floating_ip.nil?
         raise Blimpy::UnknownError, "Blimpy cannot associate a floating IP until it's been allocated properly!"
       end
-      response = fog.associate_address(image_id, floating_ip.address)
+      response = fog.associate_address(@server.id, floating_ip.address)
 
       unless response.status == 202
         raise Blimpy::UnknownError, "Blimpy failed to associate the IP somehow #{response.inspect}"
@@ -124,12 +120,12 @@ module Blimpy::Boxes
       disassociate_ip unless floating_ip.nil?
     end
 
-    def disassociate_ip
-      fog.disassociate_address(image_id, floating_ip.address)
-    end
-
     def postdestroy
       deallocate_ip unless floating_ip.nil?
+    end
+
+    def disassociate_ip
+      fog.disassociate_address(@server.id, floating_ip.address)
     end
 
     def deallocate_ip

@@ -119,13 +119,6 @@ describe Blimpy::Boxes::OpenStack do
     end
   end
 
-  describe '#poststart' do
-    it 'should associate the IP' do
-      subject.should_receive(:associate_ip)
-      subject.poststart
-    end
-  end
-
   describe '#allocate_ip' do
     let(:fog) { double('Fog') }
 
@@ -174,11 +167,17 @@ describe Blimpy::Boxes::OpenStack do
   describe '#associate_ip' do
     let(:fog) { double('Fog') }
     include_context 'valid floating_ip'
-    let(:image_id) { 'fake-id' }
+    let(:server) do
+      server = double('Fog::Compute::Server')
+      server.stub(:id).and_return(server_id)
+      server
+    end
+    let(:server_id) { 'fake-id' }
+
+    subject { described_class.new(server) }
 
     before :each do
       subject.stub(:fog).and_return(fog)
-      subject.stub(:image_id).and_return(image_id)
     end
 
     it 'should raise an exception if a floating IP hasn\'t been created' do
@@ -196,7 +195,7 @@ describe Blimpy::Boxes::OpenStack do
       end
 
       it 'should associate the right IP to the right instance ID' do
-        fog.should_receive(:associate_address).with(image_id, floating.address).and_return(response)
+        fog.should_receive(:associate_address).with(server_id, floating.address).and_return(response)
         subject.associate_ip
       end
     end
@@ -210,7 +209,7 @@ describe Blimpy::Boxes::OpenStack do
 
       it 'should raise an error' do
         subject.stub(:floating_ip).and_return(floating)
-        fog.should_receive(:associate_address).with(image_id, floating.address).and_return(response)
+        fog.should_receive(:associate_address).with(server_id, floating.address).and_return(response)
         expect {
           subject.associate_ip
         }.to raise_error(Blimpy::UnknownError)
@@ -257,15 +256,21 @@ describe Blimpy::Boxes::OpenStack do
   describe '#disassociate_ip' do
     let(:fog) { double('Fog') }
     include_context 'valid floating_ip'
-    let(:image_id) { 'fake-id' }
+    let(:server) do
+      server = double('Fog::Compute::Server')
+      server.stub(:id).and_return(server_id)
+      server
+    end
+    let(:server_id) { 'fake-id' }
+
+    subject { described_class.new(server) }
 
     before :each do
       subject.stub(:fog).and_return(fog)
-      subject.stub(:image_id).and_return(image_id)
     end
 
     it 'should disassociate the right IP to the right instance ID' do
-      fog.should_receive(:disassociate_address).with(image_id, floating.address)
+      fog.should_receive(:disassociate_address).with(server_id, floating.address)
       subject.disassociate_ip
     end
   end
@@ -273,11 +278,9 @@ describe Blimpy::Boxes::OpenStack do
   describe '#deallocate_ip' do
     let(:fog) { double('Fog') }
     include_context 'valid floating_ip'
-    let(:image_id) { 'fake-id' }
 
     before :each do
       subject.stub(:fog).and_return(fog)
-      subject.stub(:image_id).and_return(image_id)
     end
 
     context 'with a good response' do
