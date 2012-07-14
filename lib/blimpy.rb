@@ -23,4 +23,6 @@ module Blimpy
   end
   class InvalidShipException < Exception
   end
+  class UnsupportedFeatureException < Exception
+  end
 end

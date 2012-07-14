@@ -72,23 +72,3 @@ Feature: Start a VM or cluster of VMs in the cloud
     When I run `blimpy start`
     Then the exit status should be 0
 
-  @slow @destroy @openstack @wip
-  Scenario: start with an OpenStack Blimpfile
-    Given I have the Blimpfile:
-      """
-      Blimpy.fleet do |f|
-        f.add(:openstack) do |host|
-          host.name = 'Cucumber Host'
-        end
-      end
-      """
-    When I run `blimpy start`
-    Then the exit status should be 0
-    And the output should contain:
-      """
-      Up, up and away!
-      """
-    And the output should contain:
-      """
-      online at:
-      """

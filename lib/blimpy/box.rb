@@ -16,7 +16,7 @@ module Blimpy
     def self.from_instance_id(an_id, data)
       return if data['type'].nil?
 
-      name = data['type'].upcase.to_sym
+      name = data['type'].to_sym
       return unless Blimpy::Boxes.const_defined? name
 
       klass = Blimpy::Boxes.const_get(name)
@@ -50,8 +50,8 @@ module Blimpy
 
     def online!
       File.open(state_file, 'a') do |f|
-        f.write("dns: #{@server.dns_name}\n")
-        f.write("internal_dns: #{@server.private_dns_name}\n")
+        f.write("dns: #{dns_name}\n")
+        f.write("internal_dns: #{internal_dns_name}\n")
       end
     end
 

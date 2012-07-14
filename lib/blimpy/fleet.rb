@@ -1,5 +1,6 @@
 require 'blimpy/helpers/state'
 require 'blimpy/boxes/aws'
+require 'blimpy/boxes/openstack'
 
 module Blimpy
   class Fleet
@@ -14,7 +15,7 @@ module Blimpy
     end
 
     def valid_types
-      [:aws]
+      [:aws, :openstack]
     end
 
     def add(box_type, &block)
@@ -25,7 +26,13 @@ module Blimpy
         return false
       end
 
-      box = Blimpy::Boxes::AWS.new
+      box = nil
+      if box_type == :aws
+        box = Blimpy::Boxes::AWS.new
+      end
+      if box_type == :openstack
+        box = Blimpy::Boxes::OpenStack.new
+      end
 
       if box.nil?
         return false

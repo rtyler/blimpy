@@ -10,4 +10,5 @@ group :development do
   gem 'aruba'
   gem 'tempdir'
   gem 'pry'
+  gem 'ruby-debug19', :require => 'ruby-debug'
 end
