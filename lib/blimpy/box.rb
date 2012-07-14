@@ -1,3 +1,5 @@
+require 'rubygems'
+require 'yaml'
 require 'blimpy/helpers/state'
 require 'blimpy/livery'
 require 'blimpy/keys'
@@ -10,13 +12,14 @@ module Blimpy
 
     attr_reader :allowed_regions, :region
     attr_accessor :image_id, :flavor, :group, :ports
+    attr_accessor :dns, :internal_dns
     attr_accessor :name, :tags, :fleet_id, :username, :livery
 
 
     def self.from_instance_id(an_id, data)
-      return if data['type'].nil?
+      return if data[:type].nil?
 
-      name = data['type'].to_sym
+      name = data[:type].to_sym
       return unless Blimpy::Boxes.const_defined? name
 
       klass = Blimpy::Boxes.const_get(name)
@@ -25,7 +28,7 @@ module Blimpy
       return if server.nil?
 
       box = klass.new(server)
-      box.name = data['name']
+      box.name = data[:name]
       box
     end
 
@@ -49,10 +52,7 @@ module Blimpy
     end
 
     def online!
-      File.open(state_file, 'a') do |f|
-        f.write("dns: #{dns_name}\n")
-        f.write("internal_dns: #{internal_dns_name}\n")
-      end
+      write_state_file
     end
 
     def validate!
@@ -108,13 +108,27 @@ module Blimpy
     def postdestroy
     end
 
+    def type
+      # We only really care about the class name as part of the Blimpy::Boxes
+      # module
+      self.class.to_s.split('::').last
+    end
+
+    def serializable_attributes
+      [:type, :name, :region, :dns, :internal_dns]
+    end
+
+    def immutable_attributes
+      [:type]
+    end
+
     def write_state_file
+      data = {}
+      serializable_attributes.each do |attr|
+        data[attr] = self.send(attr)
+      end
       File.open(state_file, 'w') do |f|
-        # We only really care about the class name as part of the Blimpy::Boxes
-        # module
-        f.write("type: #{self.class.to_s.split('::').last}\n")
-        f.write("name: #{@name}\n")
-        f.write("region: #{@region}\n")
+        f.write(data.to_yaml)
       end
     end
 
@@ -138,11 +152,13 @@ module Blimpy
 
 
     def with_data(ship_id, data)
-      @dns = data['dns']
-      @region = data['region']
+      data.each do |key, value|
+        next if immutable_attributes.include? key.to_sym
+        self.send("#{key}=", value)
+      end
     end
 
-    def dns_name
+    def dns
       @dns ||= begin
           if @server.nil?
             'no name'
@@ -152,9 +168,14 @@ module Blimpy
         end
     end
 
-    def internal_dns_name
-      return @server.private_dns_name unless @server.nil?
-      'no name'
+    def internal_dns
+      @internal_dns ||= begin
+                          if @server.nil?
+                            'no name'
+                          else
+                            @server.private_dns_name
+                          end
+                        end
     end
 
     def run_command(*args)
@@ -172,13 +193,13 @@ module Blimpy
         args = ARGV[2 .. -1]
       end
       run_command('ssh', '-o', 'StrictHostKeyChecking=no',
-                  '-l', username, dns_name, *args)
+                  '-l', username, dns, *args)
     end
 
     def scp_file(filename, directory='')
       filename = File.expand_path(filename)
       run_command('scp', '-o', 'StrictHostKeyChecking=no',
-                  filename, "#{username}@#{dns_name}:#{directory}", *ARGV[3..-1])
+                  filename, "#{username}@#{dns}:#{directory}", *ARGV[3..-1])
     end
 
     def bootstrap_livery
@@ -203,7 +224,7 @@ module Blimpy
                     '--exclude=.svn',
                     '--exclude=.blimpy.d',
                     '.',
-                    "#{username}@#{dns_name}:#{dir_name}/")
+                    "#{username}@#{dns}:#{dir_name}/")
       else
         puts "Remote host has no rsync(1), falling back to copying a full tarball over"
         tarball = Blimpy::Livery.tarball_directory(Dir.pwd)

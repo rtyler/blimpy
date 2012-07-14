@@ -9,13 +9,16 @@ module Blimpy::Boxes
       fog.servers.get(id)
     end
 
-
     class FloatingIp
       attr_accessor :address, :id
 
       def initialize(address, id)
         @address = address
         @id = id
+      end
+
+      def to_yaml(*args)
+        {:address => address, :id => id}.to_yaml
       end
     end
 
@@ -41,11 +44,23 @@ module Blimpy::Boxes
       end
     end
 
-    def dns_name
+    def serializable_attributes
+      super + [:network]
+    end
+
+    def network
+      floating_ip
+    end
+
+    def network=(floating_hash)
+      floating_ip = FloatingIp.new(floating_hash['address'], floating_hash['id'])
+    end
+
+    def dns
       'unavailable'
     end
 
-    def internal_dns_name
+    def internal_dns
       'unavailable'
     end
 

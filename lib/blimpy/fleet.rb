@@ -122,7 +122,7 @@ module Blimpy
         host.wait_for_state('running') {  }
         @airborn = true
         print "\n"
-        puts ">> #{host.name} online at: #{host.dns_name}"
+        puts ">> #{host.name} online at: #{host.dns}"
         host.online!
         host.bootstrap
         puts

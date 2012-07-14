@@ -28,7 +28,7 @@ module Blimpy
         ship_id = nil
         data = nil
         engine.fleet.members.each do |instance_id, instance_data|
-          next unless instance_data['name'] == name
+          next unless instance_data[:name] == name
           ship_id = instance_id
           data = instance_data
           break
@@ -88,7 +88,7 @@ module Blimpy
       blimps.each do |blimp, data|
         instance_id = File.basename(blimp)
         instance_id = instance_id.split('.blimp').first
-        puts "#{data['name']} (#{instance_id}) is: online at #{data['dns']}"
+        puts "#{data[:name]} (#{instance_id}) is: online at #{data[:dns]}"
       end
     end
 

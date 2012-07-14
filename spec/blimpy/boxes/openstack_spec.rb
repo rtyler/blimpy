@@ -294,3 +294,11 @@ describe Blimpy::Boxes::OpenStack do
     end
   end
 end
+
+describe Blimpy::Boxes::OpenStack::FloatingIp do
+  subject do
+    described_class.new('127.0.0.1', 1)
+  end
+
+  it { should respond_to(:to_yaml) }
+end

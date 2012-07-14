@@ -61,7 +61,7 @@ describe Blimpy::Box do
       end
 
       it 'should set the dns_name' do
-        subject.dns_name.should == data['dns']
+        subject.dns.should == data['dns']
       end
 
       it 'should set the region' do
@@ -75,6 +75,8 @@ describe Blimpy::Box do
     let(:server) do
       server = double('Fog::Compute::AWS::Server')
       server.stub(:id).and_return(server_id)
+      server.stub(:dns_name).and_return('test')
+      server.stub(:private_dns_name).and_return('test')
       server
     end
 
@@ -126,7 +128,7 @@ describe Blimpy::Box do
       end
 
       it 'should fail if the "type" is not a defined Box class' do
-        result = Blimpy::Box.from_instance_id('someid', {'type' => 'MAGIC'})
+        result = Blimpy::Box.from_instance_id('someid', {:type => 'MAGIC'})
         result.should be_nil
       end
 
@@ -137,7 +139,7 @@ describe Blimpy::Box do
         end
 
         it 'should create a new AWS Box instance' do
-          result = Blimpy::Box.from_instance_id('someid', {'type' => 'AWS'})
+          result = Blimpy::Box.from_instance_id('someid', {:type => 'AWS'})
           result.should be_instance_of Blimpy::Boxes::AWS
         end
       end
