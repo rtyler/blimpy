@@ -14,7 +14,6 @@ Feature: Start a VM or cluster of VMs in the cloud
       """
       Blimpy.fleet do |f|
         f.add(:aws) do |host|
-          host.group = 'Simple'
           host.name = 'Cucumber Host'
         end
       end
@@ -46,7 +45,6 @@ Feature: Start a VM or cluster of VMs in the cloud
       """
       Blimpy.fleet do |f|
         f.add(:aws) do |host|
-          host.group = 'Simple'
           host.name = 'Cucumber Host'
         end
       end
