@@ -165,8 +165,8 @@ end
         end
 
         blimps.each do |blimp, data|
-          next unless data['name']
-          box = box_by_name(data['name'])
+          next unless data[:name]
+          box = box_by_name(data[:name])
           box.bootstrap
         end
       end
