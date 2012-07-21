@@ -1,10 +1,14 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'yaml'
 # Need to force the psych engine since syck doesn't seem to serialize the
 # OpenStack Floating IPs
-YAML::ENGINE.yamler = 'psych'
+begin
+  require 'rubygems'
+  require 'yaml'
+  YAML::ENGINE.yamler = 'psych'
+rescue NameError
+  # I don't think we have YAML::ENGINE until Ruby 1.9
+end
 
 begin
   require 'blimpy/cli'
