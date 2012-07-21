@@ -192,7 +192,8 @@ module Blimpy
       if args.empty?
         args = ARGV[2 .. -1]
       end
-      run_command('ssh', '-o', 'StrictHostKeyChecking=no',
+      run_command('ssh', '-o', 'PasswordAuthentication=no',
+                  '-o', 'StrictHostKeyChecking=no',
                   '-l', username, dns, *args)
     end
 
@@ -220,6 +221,8 @@ module Blimpy
       if can_rsync?
         unpack_command = "cd #{dir_name}"
         run_command('rsync', '-avL',
+                    '-e',
+                    'ssh -o StrictHostKeyChecking=no',
                     '--exclude=.git',
                     '--exclude=.svn',
                     '--exclude=.blimpy.d',
