@@ -7,6 +7,7 @@ group :development do
   gem 'rake'
   gem 'rspec'
   gem 'cucumber'
+  gem 'ci_reporter'
   gem 'aruba'
   gem 'tempdir'
   gem 'pry'
