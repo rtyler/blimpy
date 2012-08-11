@@ -124,13 +124,27 @@ end
     end
 
     desc 'ssh BLIMP_NAME', 'Log into a running blimp'
-    def ssh(name, *args)
+    def ssh(name=nil, *args)
       ensure_blimpfile
-      box = box_by_name(name)
-      if box.nil?
-        puts "Could not find a blimp named \"#{name}\""
-        exit 1
+      unless name.nil?
+        box = box_by_name(name)
+        if box.nil?
+          puts "Could not find a blimp named \"#{name}\""
+          exit 1
+        end
+      else
+        blimps = current_blimps
+        unless blimps
+          puts "No Blimps running!"
+          exit 1
+        end
+
+        blimps.each do |blimp, data|
+          next unless data[:name]
+          box = box_by_name(data[:name])
+        end
       end
+
       box.wait_for_sshd
       box.ssh_into
     end
