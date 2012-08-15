@@ -9,7 +9,7 @@ module Blimpy::Boxes
     DEFAULT_IMAGE_ID = 'ami-ec0b86dc'
 
     def self.fog_server_for_instance(id, blimpdata)
-      region = blimpdata['region'] || DEFAULT_REGION
+      region = blimpdata[:region] || DEFAULT_REGION
       fog = Fog::Compute.new(:provider => 'AWS', :region => region)
       fog.servers.get(id)
     end
