@@ -56,7 +56,7 @@ module Blimpy
       boxes = []
       print '>> Resuming: '
       instances.each do |instance_id, instance_data|
-        print "#{instance_data['name']},"
+        print "#{instance_data[:name]},"
         box = Blimpy::Box.from_instance_id(instance_id, instance_data)
         box.resume
         boxes << box
@@ -148,7 +148,7 @@ module Blimpy
 
       members.each do |instance_id, instance_data|
         box = Blimpy::Box.from_instance_id(instance_id, instance_data)
-        print "#{instance_data['name']},"
+        print "#{instance_data[:name]},"
         box.stop
         boxes << box
       end
