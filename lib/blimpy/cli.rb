@@ -185,5 +185,10 @@ end
         end
       end
     end
+
+    desc 'version', 'Print the current Blimpy gem version'
+    def version
+      puts Blimpy::VERSION
+    end
   end
 end

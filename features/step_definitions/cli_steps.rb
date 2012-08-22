@@ -52,3 +52,7 @@ Then /^the output should contain the right DNS info$/ do
   end
   step %{the output should contain "#{internal_name}"}
 end
+
+Then /^the output should contain the current Blimpy version$/ do
+  assert_partial_output(Blimpy::VERSION, all_output)
+end
