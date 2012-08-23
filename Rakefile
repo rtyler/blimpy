@@ -9,28 +9,28 @@ RSpec::Core::RakeTask.new('spec') do |t|
 end
 
 
+Cucumber::Rake::Task.new('cucumber')
+
 namespace :cucumber do
-  cucumber_opts = '--color --format progress --tags ~@wip'
-
-  Cucumber::Rake::Task.new('basic') do |t|
-    t.cucumber_opts = cucumber_opts + ' --tags ~@slow'
-  end
-
-  Cucumber::Rake::Task.new('integration') do |t|
-    t.cucumber_opts = cucumber_opts + ' --tags @slow --tags ~@openstack'
+  Cucumber::Rake::Task.new('aws') do |t|
+    t.cucumber_opts = '-p aws'
   end
 
   Cucumber::Rake::Task.new('openstack') do |t|
-    t.cucumber_opts = cucumber_opts + ' --tags @openstack'
+    t.cucumber_opts = '-p openstack'
+  end
+
+  Cucumber::Rake::Task.new('wip') do |t|
+    t.cucumber_opts = '-p wip'
   end
 end
 
 desc 'Run the basic test suite'
-task :test => [:spec, :"cucumber:basic"]
+task :test => ['spec', 'cucumber']
 
 namespace :test do
-  desc 'Run all the tests, including the slow integration tests'
-  task :all => [:spec, :'cucumber:basic', :'cucumber:integration']
+  desc 'Run all the tests, including the slow (AWS-based) integration tests'
+  task :all => ['spec', 'cucumber', 'cucumber:aws']
 end
 
 

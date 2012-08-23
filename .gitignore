@@ -18,3 +18,5 @@ tmp
 .blimpy.d
 .rvmrc
 Blimpyfile
+features/report.html
+features/reports

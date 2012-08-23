@@ -1,0 +1,7 @@
+<%
+opts = "--color --format progress --format junit --out features/reports --format html --out features/report.html"
+%>
+default: <%= opts %> --tags ~@wip --tags ~@slow
+aws: <%= opts %> --tags ~@wip --tags @slow --tags ~@openstack
+openstack: <%= opts %> --tags ~@wip --tags @openstack
+wip: <%= opts %> --tags @wip
