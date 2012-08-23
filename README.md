@@ -50,8 +50,8 @@ Here's an example Blimpfile:
         fleet.add(:aws) do |ship|
             ship.name = 'rails-app'
             ship.ports = [22, 80, 8080] # [Optional] Create a security group with these ports open
-            ship.image_id = 'ami-349b495d' # [Optional] defaults to Ubuntu 10.04 64-bit
-            ship.livery = 'rails' # [Optional]
+            ship.image_id = 'ami-4438b474' # [Optional] defaults to Ubuntu 12.04 64-bit
+            ship.livery = Blimpy::Livery::CWD # [Optional]
             ship.group = 'Simple' # [Optional] The name of the desired Security Group
             ship.region = 'us-west-1' # [Optional] defaults to us-west-2
             ship.username = 'ubuntu' # [Optional] SSH username, defaults to "ubuntu" for AWS machines

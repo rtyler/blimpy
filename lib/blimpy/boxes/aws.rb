@@ -5,8 +5,8 @@ module Blimpy::Boxes
   class AWS < Blimpy::Box
     # Default to US West (Oregon)
     DEFAULT_REGION = 'us-west-2'
-    # Default to 10.04 64-bit
-    DEFAULT_IMAGE_ID = 'ami-ec0b86dc'
+    # Default to 12.04 64-bit
+    DEFAULT_IMAGE_ID = 'ami-4438b474'
 
     def self.fog_server_for_instance(id, blimpdata)
       region = blimpdata[:region] || DEFAULT_REGION
