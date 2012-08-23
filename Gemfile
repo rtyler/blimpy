@@ -5,7 +5,7 @@ gemspec
 
 group :development do
   gem 'rake'
-  gem 'rspec'
+  gem 'rspec', '~> 2.11.0'
   gem 'cucumber'
   gem 'ci_reporter'
   gem 'aruba'
