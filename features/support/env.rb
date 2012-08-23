@@ -12,13 +12,15 @@ $:.unshift(File.expand_path(File.dirname(__FILE__) + "/../../lib"))
 require 'blimpy'
 require 'blimpy/livery'
 
-module BlimpyWorld
-  def create_blimpfile(string)
-    path = File.join(@tempdir, 'Blimpfile')
-    File.open(path, 'w') do |f|
-      f.write(string)
+module Blimpy
+  module Cucumber
+    def create_blimpfile(string)
+      path = File.join(@tempdir, 'Blimpfile')
+      File.open(path, 'w') do |f|
+        f.write(string)
+      end
     end
   end
 end
 
-World(BlimpyWorld)
+World(Blimpy::Cucumber)
