@@ -2,7 +2,6 @@ require 'rubygems'
 require 'thor'
 
 require 'blimpy'
-require 'blimpy/engine'
 
 module Blimpy
   class CLI < Thor
@@ -16,18 +15,16 @@ module Blimpy
         end
       end
 
-      def load_engine
-        engine = Blimpy::Engine.new
-        engine.load_file(File.open(BLIMPFILE).read)
-        engine
+      def load_blimpfile
+        Blimpy.load_file(File.open(BLIMPFILE).read)
       end
 
       def box_by_name(name)
-        engine = load_engine
+        fleet = load_blimpfile
         box = nil
         ship_id = nil
         data = nil
-        engine.fleet.members.each do |instance_id, instance_data|
+        fleet.members.each do |instance_id, instance_data|
           next unless instance_data[:name] == name
           ship_id = instance_id
           data = instance_data
@@ -38,7 +35,7 @@ module Blimpy
           return nil
         end
 
-        engine.fleet.ships.each do |ship|
+        fleet.ships.each do |ship|
           next unless ship.name == name
           ship.with_data(ship_id, data)
           return ship
@@ -62,7 +59,7 @@ module Blimpy
     def start
       ensure_blimpfile
       begin
-        engine = load_engine
+        fleet = load_blimpfile
       rescue Blimpy::InvalidBlimpFileError => e
         puts "The Blimpfile is invalid!"
         exit 1
@@ -73,7 +70,7 @@ module Blimpy
         exit 0
       end
 
-      engine.fleet.start
+      fleet.start
     end
 
     desc 'status', 'Show running blimps'

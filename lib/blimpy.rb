@@ -1,5 +1,8 @@
+require 'rubygems'
+require 'fog/core'
+require 'fog/compute'
+
 require 'blimpy/box'
-require 'blimpy/engine'
 require 'blimpy/fleet'
 require 'blimpy/version'
 
@@ -12,6 +15,22 @@ module Blimpy
     block.call fleet
     fleet
   end
+
+    def self.load_file(file_content)
+      if file_content.nil? || file_content.empty?
+        raise InvalidBlimpFileError, 'File appears empty'
+      end
+
+      begin
+        fleet = eval(file_content)
+        if fleet and !(fleet.instance_of? Blimpy::Fleet)
+          raise Exception, 'File does not create a Fleet'
+        end
+      rescue Exception => e
+        raise InvalidBlimpFileError, e.to_s
+      end
+      fleet
+    end
 
   class UnknownError < Exception
   end
