@@ -46,4 +46,5 @@ module Blimpy
   end
   class UnsupportedFeatureException < Exception
   end
+  class InvalidLiveryException < Exception; end;
 end

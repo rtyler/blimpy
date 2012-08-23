@@ -144,5 +144,55 @@ describe Blimpy::Box do
         end
       end
     end
+
+    describe '#bootstrap_livery' do
+      let(:livery) { double('Mock-livery') }
+
+      it 'should raise an error if the livery is a symbol (old style)' do
+        subject.livery = :deprecated
+        expect {
+          subject.bootstrap_livery
+        }.to raise_error(Blimpy::InvalidLiveryException)
+      end
+
+      it 'should invoke the correct livery methods' do
+        subject.livery = livery
+        livery.should_receive(:setup_on).with(subject)
+        livery.should_receive(:preflight).with(subject)
+        livery.should_receive(:flight).with(subject)
+        livery.should_receive(:postflight).with(subject)
+
+        subject.bootstrap_livery
+      end
+    end
+
+    describe '#bootstrap' do
+      context 'when livery is not defined' do
+        before :each do
+          subject.livery = nil
+        end
+
+        it 'should not call any of the bootstrap methods' do
+          subject.should_receive(:wait_for_sshd).never
+          subject.should_receive(:bootstrap_livery).never
+          subject.bootstrap
+        end
+      end
+
+      context 'when a livery is defined' do
+        before :each do
+          subject.should_receive(:wait_for_sshd)
+          subject.should_receive(:bootstrap_livery)
+        end
+
+        context 'as a class object' do
+          it 'should instantiate the livery' do
+            subject.livery = Blimpy::Livery::CWD
+            subject.livery.should_receive(:new)
+            subject.bootstrap
+          end
+        end
+      end
+    end
   end
 end

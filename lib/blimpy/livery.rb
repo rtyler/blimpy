@@ -2,8 +2,10 @@ require 'rubygems'
 require 'zlib'
 require 'archive/tar/minitar'
 
+require 'blimpy/livery/cwd'
+
 module Blimpy
-  class Livery
+  module Livery
     def self.tarball_directory(directory)
       if directory.nil? || !(File.directory? directory)
         raise ArgumentError, "The argument '#{directory}' doesn't appear to be a directory"
