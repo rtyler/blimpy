@@ -1,11 +1,16 @@
+require 'rubygems'
 require 'aruba/cucumber'
 require 'fileutils'
+require 'ruby-debug'
 require 'temp_dir'
 
 
 # Pull in my gem working directory bin directory
 ENV['PATH'] = "#{File.expand_path(File.dirname(__FILE__) + '/../../bin')}#{File::PATH_SEPARATOR}#{ENV['PATH']}"
 
+$:.unshift(File.expand_path(File.dirname(__FILE__) + "/../../lib"))
+require 'blimpy'
+require 'blimpy/livery'
 
 module BlimpyWorld
   def create_blimpfile(string)

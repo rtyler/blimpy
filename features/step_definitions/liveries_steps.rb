@@ -5,10 +5,10 @@ end
 When /^I evaluate the Blimpfile$/ do
   @blimpfile.should_not be_nil
   @fleet = eval(@blimpfile)
-  @fleet.should_not be_nil
 end
 
-Then /^the "([^"]*)" livery should be set up$/ do |arg1|
-  pending # express the regexp above with the code you wish you had
+Then /^the CWD livery should be set up$/ do
+  @fleet.should_not be_nil
+  @fleet.ships.first.livery.should == Blimpy::Livery::CWD
 end
 
