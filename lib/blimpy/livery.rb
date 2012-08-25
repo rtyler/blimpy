@@ -3,6 +3,7 @@ require 'zlib'
 require 'archive/tar/minitar'
 
 require 'blimpy/livery/cwd'
+require 'blimpy/livery/puppet'
 
 module Blimpy
   module Livery

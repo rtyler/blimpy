@@ -40,5 +40,3 @@ else
   fi
 
 fi
-
-puppet apply --modulepath=./modules --verbose manifests/site.pp

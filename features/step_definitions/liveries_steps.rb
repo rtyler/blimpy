@@ -12,3 +12,8 @@ Then /^the CWD livery should be set up$/ do
   @fleet.ships.first.livery.should == Blimpy::Livery::CWD
 end
 
+Then /^the Puppet livery should be correctly configured$/ do
+  @fleet.should_not be_nil
+  @fleet.ships.first.livery.should be_instance_of(Blimpy::Livery::Puppet)
+end
+

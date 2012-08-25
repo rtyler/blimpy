@@ -11,10 +11,14 @@ module Blimpy
         box.scp_file(bootstrap_script, dir_name)
       end
 
+      def use_sudo?(box)
+        box.username != 'root'
+      end
+
       def flight(box)
         run_sudo = 'sudo'
 
-        if box.username == 'root'
+        if use_sudo?(box)
           run_sudo = ''
         end
 

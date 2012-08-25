@@ -17,7 +17,6 @@ Feature: Craft machines based on a livery
     When I evaluate the Blimpfile
     Then the CWD livery should be set up
 
-  @wip
   Scenario: Configuration-less liveries
     Given the following Blimpfile contents:
       """
