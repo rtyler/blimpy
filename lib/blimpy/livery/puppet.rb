@@ -11,24 +11,35 @@ module Blimpy
         @module_path = './modules'
         @manifest_path = 'manifests/site.pp'
         @options = '--verbose'
+        @puppet_exists = false
       end
 
       def script
         'puppet.sh'
       end
 
+      def preflight(box)
+        # If we find Puppet in our default path, we don't really need to send
+        # the bootstrap script again
+        @puppet_exists = box.ssh_into('which puppet > /dev/null')
+        unless @puppet_exists
+          super(box)
+        end
+      end
+
       def flight(box)
-        # This should get our puppet.sh bootstrap script run
-        super(box)
+        unless @puppet_exists
+          # This should get our puppet.sh bootstrap script run
+          super(box)
+        end
 
         # At this point we should be safe to actually invoke Puppet
         command = "puppet apply --modulepath=#{module_path} #{options} #{manifest_path}"
 
-        if use_sudo?(box)
-          box.ssh_into("sudo #{command}")
-        else
-          box.ssh_into(command)
-        end
+        run_sudo = ''
+        run_sudo = 'sudo' if use_sudo?(box)
+
+        box.ssh_into("cd #{dir_name} && #{run_sudo} #{command}")
       end
 
       def postflight(box)
