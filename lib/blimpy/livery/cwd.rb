@@ -18,7 +18,7 @@ module Blimpy
       def flight(box)
         run_sudo = 'sudo'
 
-        if use_sudo?(box)
+        unless use_sudo?(box)
           run_sudo = ''
         end
 

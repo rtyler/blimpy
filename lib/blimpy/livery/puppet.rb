@@ -35,7 +35,7 @@ module Blimpy
       end
 
       def bootstrap_script
-        File.expand_path(File.dirname(__FILE__) + "/../../scripts/#{script}")
+        File.expand_path(File.dirname(__FILE__) + "/../../../scripts/#{script}")
       end
 
       def self.configure(&block)
