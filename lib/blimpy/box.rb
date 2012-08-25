@@ -247,10 +247,6 @@ module Blimpy
       raise NotImplementedError, '#fog should be implemented by cloud-specific subclasses'
     end
 
-    def can_rsync?
-      @can_rsync ||= ssh_into('-q', 'which rsync > /dev/null')
-    end
-
 
     private
 

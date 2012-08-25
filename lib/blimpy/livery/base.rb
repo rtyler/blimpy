@@ -24,8 +24,12 @@ module Blimpy
          'ssh -o StrictHostKeyChecking=no'] + excludes
       end
 
+      def can_rsync?(box)
+        @can_rsync ||= box.ssh_into('-q', 'which rsync > /dev/null')
+      end
+
       def sync_to(box)
-        if can_rsync?
+        if can_rsync? box
           command = rsync_command + ['.', "#{box.username}@#{box.dns}:#{dir_name}/"]
           box.run_command(*command)
         else
