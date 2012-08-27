@@ -25,6 +25,11 @@ module Blimpy
         unless @puppet_exists
           super(box)
         end
+
+        unless box.ssh_into("test -f #{dir_name}/gempath.sh")
+          gemhelper = File.expand_path(File.dirname(__FILE__) + "/../../../scripts/gempath.sh")
+          box.scp_file(gemhelper, dir_name)
+        end
       end
 
       def flight(box)
@@ -39,7 +44,7 @@ module Blimpy
         run_sudo = ''
         run_sudo = 'sudo' if use_sudo?(box)
 
-        box.ssh_into("cd #{dir_name} && #{run_sudo} #{command}")
+        box.ssh_into("cd #{dir_name} && #{run_sudo} ./gempath.sh #{command}")
       end
 
       def postflight(box)
