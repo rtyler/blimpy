@@ -208,10 +208,10 @@ module Blimpy
                   '-l', username, dns, *args)
     end
 
-    def scp_file(filename, directory='')
+    def scp_file(filename, directory='', *args)
       filename = File.expand_path(filename)
       run_command('scp', '-o', 'StrictHostKeyChecking=no',
-                  filename, "#{username}@#{dns}:#{directory}", *ARGV[3..-1])
+                  filename, "#{username}@#{dns}:#{directory}", *args)
     end
 
     def bootstrap_livery

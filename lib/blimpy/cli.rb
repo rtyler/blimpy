@@ -155,7 +155,8 @@ end
         exit 1
       end
       box.wait_for_sshd
-      box.scp_file(filename)
+      # Pass any extra commands along to the `scp` invocation
+      box.scp_file(filename, '', *ARGV[3..-1])
     end
 
     desc 'provision BLIMP_NAME', 'Run the livery again'
