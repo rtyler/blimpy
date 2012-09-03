@@ -4,7 +4,7 @@
 ![Excelsior!](http://strongspace.com/rtyler/public/excelsior.png)
 
 
-### About
+## About
 
 Blimpy is a tool to help developers spin up and utilize machines "in the
 cloud."
@@ -30,18 +30,10 @@ Once machines are online, they're easy to access by name with:
 Then once you're finished working with the machines a simple `blimpy destroy`
 will terminate the machines.
 
+
 ---
 
-(Inspired by [Vagrant](http://vagrantup.com))
-
-Notes and other bits are being stored in [this public Evernote
-notebook](https://www.evernote.com/pub/agentdero/blimpy).
-
-The current concept/design document is captured in [this
-note](https://www.evernote.com/pub/agentdero/blimpy#b=58a228bb-8910-4cd1-a7f5-995d775b81a2&n=06def701-7e25-425b-81d4-5811e7987c7e)
-
-
-### The Blimpfile
+## The Blimpfile
 
 Here's an example Blimpfile:
 
@@ -59,6 +51,14 @@ Here's an example Blimpfile:
     end
 ```
 
+### Supported Clouds
+
+Currently Blimpy supports creating machines on:
+
+ * [Amazon Web Services](https://github.com/rtyler/blimpy/wiki/AWS) - using the `:aws` argument passed into `fleet.add`
+ * [OpenStack](https://github.com/rtyler/blimpy/wiki/OpenStack) - using the `:openstack` argument passed into `fleet.add`
+
+---
 
 ### What is Livery?
 
