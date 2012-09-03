@@ -87,6 +87,11 @@ module Blimpy
       bootstrap_livery
     end
 
+    # This is just here to make things more consistent from an API perspective
+    def provision
+      bootstrap
+    end
+
     def stop
       unless @server.nil?
         @server.stop
