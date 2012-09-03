@@ -18,6 +18,11 @@ module Blimpy
 
       def rsync_command
         excludes = rsync_excludes.map { |x| "--exclude=#{x}" }
+
+        if File.exists? '.blimpignore'
+          excludes << '--exclude-from=.blimpignore'
+        end
+
         ['rsync',
          '-avL',
          '-e',
