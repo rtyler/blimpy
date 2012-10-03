@@ -7,15 +7,16 @@ module Blimpy
       if ports.nil? or ports.empty?
         return nil
       end
+      unless ports.is_a? Set
+        ports = Set.new(ports)
+      end
 
-      ports = Set.new(ports)
       # Lolwut, #hash is inconsistent between ruby processes
       "Blimpy-#{Zlib.crc32(ports.inspect)}"
     end
 
     def self.ensure_group(fog, ports)
       name = group_id(ports)
-      ports = Set.new(ports)
 
       exists = fog.security_groups.get(name)
 
