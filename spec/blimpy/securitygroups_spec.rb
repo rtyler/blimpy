@@ -3,7 +3,7 @@ require 'blimpy/securitygroups'
 
 describe Blimpy::SecurityGroups do
     let(:fog) { mock('Fog object') }
-    let(:ports) { [22, 8080] }
+    let(:ports) { Set.new([22, 8080]) }
 
   describe '#group_id' do
     it 'should return nil for an empty port Array' do
