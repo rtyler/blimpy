@@ -24,7 +24,7 @@ if [ "${OSNAME}" = "FreeBSD" ]; then
 
 else
 
-  export PATH=/var/lib/gems/1.8/bin:$PATH
+  export PATH=/var/lib/gems/1.8/bin:/usr/local/bin:$PATH
 
   which puppet
 
@@ -36,7 +36,7 @@ else
                       libopenssl-ruby1.8 \
                       rubygems
 
-      gem install puppet --no-ri --no-rdoc
+      gem install puppet --version "~> 2.7" --no-ri --no-rdoc
   fi
 
 fi
