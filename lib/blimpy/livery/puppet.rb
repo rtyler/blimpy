@@ -44,7 +44,7 @@ module Blimpy
         run_sudo = ''
         run_sudo = 'sudo' if use_sudo?(box)
 
-        box.ssh_into("cd #{dir_name} && #{run_sudo} ./gempath.sh #{command}")
+        box.ssh_into("cd #{dir_name} && chmod 755 ./gempath.sh #{command} && #{run_sudo} ./gempath.sh #{command}")
       end
 
       def postflight(box)
