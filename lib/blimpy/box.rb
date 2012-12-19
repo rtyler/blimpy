@@ -229,21 +229,23 @@ module Blimpy
       @exec_commands = false
 
       $stdout.sync = true
+      need_nl = false
 
       until @ssh_connected
         # Run the `true` command and exit
         @ssh_connected = ssh_into('-q', 'true')
         # if SSH is killed (such as Ctrl+C), abort right away
-        raise Blimpy::Exception, "ssh was killed: #{$?.exitstatus}" if $?.exitstatus>128
+        raise Exception, "ssh was killed: #{$?.exitstatus}" if $?.exitstatus>128
 
         unless @ssh_connected
           if (Time.now.to_i - start) < 60
             print '.'
+            need_nl = true
             sleep 1
           end
         end
       end
-      puts
+      puts if need_nl
       @exec_commands = use_exec
     end
 
