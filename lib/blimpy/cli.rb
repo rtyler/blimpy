@@ -142,7 +142,7 @@ end
         end
       end
 
-      box.ssh_into
+      box.ssh_into *args
     end
 
     desc 'wait_for_ssh', 'Wait for SSHD to come online'

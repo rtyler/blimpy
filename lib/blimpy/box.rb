@@ -198,11 +198,6 @@ module Blimpy
     end
 
     def ssh_into(*args)
-      # Support using #ssh_into within our own code as well to pass arguments
-      # to the ssh(1) binary
-      if args.empty?
-        args = ARGV[2 .. -1]
-      end
       run_command('ssh', '-o', 'PasswordAuthentication=no',
                   '-o', 'StrictHostKeyChecking=no',
                   '-l', username, dns, *args)
@@ -233,11 +228,13 @@ module Blimpy
       # after sshd(8) comes online
       @exec_commands = false
 
+      $stdout.sync = true
+
       until @ssh_connected
         # Run the `true` command and exit
         @ssh_connected = ssh_into('-q', 'true')
         # if SSH is killed (such as Ctrl+C), abort right away
-        raise Blimpy::Exception, "ssh was killed: #@ssh_connected" if $?.exitstatus>128
+        raise Blimpy::Exception, "ssh was killed: #{$?.exitstatus}" if $?.exitstatus>128
 
         unless @ssh_connected
           if (Time.now.to_i - start) < 60
