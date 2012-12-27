@@ -85,7 +85,7 @@ module Blimpy
       blimps.each do |blimp, data|
         instance_id = File.basename(blimp)
         instance_id = instance_id.split('.blimp').first
-        puts "#{data[:name]} (#{instance_id}) is: online at #{data[:dns]}"
+        puts "#{data[:name]} (#{instance_id}) is: online at #{data[:dns]} (#{data[:internal_dns]} internally)"
       end
     end
 
