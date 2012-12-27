@@ -22,7 +22,7 @@ module Blimpy
           run_sudo = ''
         end
 
-        box.ssh_into("cd #{dir_name} && #{run_sudo} ./#{script}")
+        box.ssh_into("cd #{dir_name} && #{run_sudo} BLIMPY_SHIPNAME=#{box.name} ./#{script}")
       end
 
       def bootstrap_script
