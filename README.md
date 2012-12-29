@@ -47,6 +47,7 @@ Here's an example Blimpfile:
             ship.group = 'Simple' # [Optional] The name of the desired Security Group
             ship.region = 'us-west-1' # [Optional] defaults to us-west-2
             ship.username = 'ubuntu' # [Optional] SSH username, defaults to "ubuntu" for AWS machines
+            ship.flavor = 'm1.small' # [Optional] defaults to t1.micro
         end
     end
 ```
