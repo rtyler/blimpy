@@ -48,6 +48,7 @@ Here's an example Blimpfile:
             ship.region = 'us-west-1' # [Optional] defaults to us-west-2
             ship.username = 'ubuntu' # [Optional] SSH username, defaults to "ubuntu" for AWS machines
             ship.flavor = 'm1.small' # [Optional] defaults to t1.micro
+            ship.tags = {:mytag => 'somevalue'}
         end
     end
 ```
