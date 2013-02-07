@@ -126,7 +126,7 @@ module Blimpy
     end
 
     def serializable_attributes
-      [:type, :name, :region, :dns, :internal_dns]
+      [:type, :name, :region, :dns, :internal_dns, :flavor, :tags]
     end
 
     def immutable_attributes
