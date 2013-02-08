@@ -74,18 +74,24 @@ module Blimpy
     end
 
     desc 'status', 'Show running blimps'
+    method_option :format, :type => :string, :aliases => '-f', :default => 'plain', :desc => "Output format (plain or csv)"
     def status
+      format = options[:format]
       ensure_blimpfile
       blimps = current_blimps
       unless blimps
-        puts 'No currently running VMs'
+        puts 'No currently running VMs' if format == 'plain'
         exit 0
       end
 
       blimps.each do |blimp, data|
         instance_id = File.basename(blimp)
         instance_id = instance_id.split('.blimp').first
-        puts "#{data[:name]} (#{instance_id}) is: online at #{data[:dns]} (#{data[:internal_dns]} internally)"
+        if format == 'plain'
+          puts "#{data[:name]} (#{instance_id}) is: online at #{data[:dns]} (#{data[:internal_dns]} internally)"
+        elsif format == 'csv'
+          puts "#{data[:name]},#{instance_id},online,#{data[:dns]},#{data[:internal_dns]}"
+        end
       end
     end
 
