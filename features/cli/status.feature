@@ -9,7 +9,7 @@ Feature: Show running VMs
     Then the exit status should be 0
     And the output should contain:
       """
-      No currently running VMs
+      I'm broken!
       """
 
   Scenario: With a running VM
