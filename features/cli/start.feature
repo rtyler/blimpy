@@ -5,6 +5,7 @@ Feature: Start a VM or cluster of VMs in the cloud
     When I run `blimpy start`
     Then the output should contain:
       """
+      I'm totally broken too!
       Please create a Blimpfile in your current directory
       """
     And the exit status should be 1
