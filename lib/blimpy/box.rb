@@ -13,7 +13,7 @@ module Blimpy
     attr_reader :allowed_regions, :region
     attr_accessor :image_id, :flavor, :group, :ports
     attr_accessor :dns, :internal_dns
-    attr_accessor :name, :tags, :fleet_id, :username, :livery
+    attr_accessor :name, :tags, :fleet_id, :username, :ssh_port, :livery
 
 
     def self.from_instance_id(an_id, data)
@@ -200,6 +200,7 @@ module Blimpy
     def ssh_into(*args)
       run_command('ssh', '-o', 'PasswordAuthentication=no',
                   '-o', 'StrictHostKeyChecking=no',
+                  '-p', ssh_port||22.to_s,
                   '-l', username, dns, *args)
     end
 
