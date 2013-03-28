@@ -17,5 +17,9 @@ rescue LoadError
   require 'blimpy/cli'
 end
 
+# allow monkey-patching of Blimpy by the project (mainly to add more commands)
+blimprc = File.join(Dir.pwd,"Blimprc")
+Blimpy.load_file File.open(blimprc).read if File.exists? blimprc
+
 Blimpy::CLI.start
 exit 0

@@ -13,7 +13,7 @@ module Blimpy
     attr_reader :allowed_regions, :region
     attr_accessor :image_id, :flavor, :group, :ports
     attr_accessor :dns, :internal_dns
-    attr_accessor :name, :tags, :fleet_id, :username, :livery
+    attr_accessor :name, :tags, :fleet_id, :username, :ssh_port, :livery
 
 
     def self.from_instance_id(an_id, data)
@@ -198,13 +198,9 @@ module Blimpy
     end
 
     def ssh_into(*args)
-      # Support using #ssh_into within our own code as well to pass arguments
-      # to the ssh(1) binary
-      if args.empty?
-        args = ARGV[2 .. -1]
-      end
       run_command('ssh', '-o', 'PasswordAuthentication=no',
                   '-o', 'StrictHostKeyChecking=no',
+                  '-p', ssh_port||22.to_s,
                   '-l', username, dns, *args)
     end
 
@@ -233,18 +229,24 @@ module Blimpy
       # after sshd(8) comes online
       @exec_commands = false
 
+      $stdout.sync = true
+      need_nl = false
+
       until @ssh_connected
         # Run the `true` command and exit
         @ssh_connected = ssh_into('-q', 'true')
+        # if SSH is killed (such as Ctrl+C), abort right away
+        raise Exception, "ssh was killed: #{$?.exitstatus}" if $?.exitstatus>128
 
         unless @ssh_connected
           if (Time.now.to_i - start) < 60
             print '.'
+            need_nl = true
             sleep 1
           end
         end
       end
-      puts
+      puts if need_nl
       @exec_commands = use_exec
     end
 
