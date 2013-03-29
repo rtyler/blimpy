@@ -143,31 +143,8 @@ end
         end
       end
 
-      box.ssh_into *args
-    end
-
-    desc 'wait_for_ssh', 'Wait for SSHD to come online'
-    def wait_for_ssh(name=nil, *args)
-      unless name.nil?
-        box = box_by_name(name)
-        if box.nil?
-          puts "Could not find a blimp named \"#{name}\""
-          exit 1
-        end
-      else
-        blimps = current_blimps
-        unless blimps
-          puts "No Blimps running!"
-          exit 1
-        end
-
-        blimps.each do |blimp, data|
-          next unless data[:name]
-          box = box_by_name(data[:name])
-        end
-      end
-
       box.wait_for_sshd
+      box.ssh_into *args
     end
 
     desc 'scp BLIMP_NAME FILE_NAME', 'Securely copy FILE_NAME into the blimp'
@@ -178,6 +155,7 @@ end
         puts "Could not find a blimp named \"#{name}\""
         exit 1
       end
+      box.wait_for_sshd
       # Pass any extra commands along to the `scp` invocation
       box.scp_file(filename, '', *ARGV[3..-1])
     end

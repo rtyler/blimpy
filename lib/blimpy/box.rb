@@ -197,11 +197,15 @@ module Blimpy
       end
     end
 
+    def ssh_commands(*args)
+      ['ssh', '-o', 'PasswordAuthentication=no',
+          '-o', 'StrictHostKeyChecking=no',
+          '-p', (ssh_port||22).to_s,
+          '-l', username, dns, *args]
+    end
+
     def ssh_into(*args)
-      run_command('ssh', '-o', 'PasswordAuthentication=no',
-                  '-o', 'StrictHostKeyChecking=no',
-                  '-p', ssh_port||22.to_s,
-                  '-l', username, dns, *args)
+      run_command(*ssh_commands(*args))
     end
 
     def scp_file(filename, directory='', *args)
@@ -240,10 +244,20 @@ module Blimpy
       until @ssh_connected
         # Run the `true` command and exit
         @ssh_connected = ssh_into('-q', 'true')
-        # if SSH is killed (such as Ctrl+C), abort right away
-        raise Exception, "ssh was killed: #{$?.exitstatus}" if $?.exitstatus>128 && $?.exitstatus<200
+        # if SSH is killed, don't repeat
+        if $?.signaled?
+          if $?.termsig==2
+            # if Ctrl+C, report what we were doing
+            puts "Failed to connect. To try it yourself:\n#{ssh_commands('-v','true').join(' ')}"
+          end
+          raise Exception, "ssh was killed: #{$?}"
+        end
 
         unless @ssh_connected
+          if !need_nl
+            p = ssh_port.nil? ? "" : ":#{ssh_port}"
+            print ">> Connecting #{username}@#{name}#{p}"
+          end
           if (Time.now.to_i - start) < 60
             print '.'
             need_nl = true
