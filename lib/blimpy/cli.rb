@@ -62,6 +62,7 @@ module Blimpy
         fleet = load_blimpfile
       rescue Blimpy::InvalidBlimpFileError => e
         puts "The Blimpfile is invalid!"
+        puts e.to_s
         exit 1
       end
 

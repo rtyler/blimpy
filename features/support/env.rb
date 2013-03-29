@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'aruba/cucumber'
 require 'fileutils'
-require 'ruby-debug'
+require 'ruby-debug' unless RUBY_VERSION =~ /1.8.+/
 require 'temp_dir'
 
 
