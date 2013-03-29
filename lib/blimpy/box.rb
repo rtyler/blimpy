@@ -210,6 +210,11 @@ module Blimpy
                   filename, "#{username}@#{dns}:#{directory}", *args)
     end
 
+    def scp_files(directory, files)
+      filename = File.expand_path(filename)
+      run_command(*['scp', '-o', 'StrictHostKeyChecking=no']+files+["#{username}@#{dns}:#{directory}"])
+    end
+
     def bootstrap_livery
       if @livery.kind_of? Symbol
         raise Blimpy::InvalidLiveryException, 'Symbol liveries are unsupported!'
@@ -236,7 +241,7 @@ module Blimpy
         # Run the `true` command and exit
         @ssh_connected = ssh_into('-q', 'true')
         # if SSH is killed (such as Ctrl+C), abort right away
-        raise Exception, "ssh was killed: #{$?.exitstatus}" if $?.exitstatus>128
+        raise Exception, "ssh was killed: #{$?.exitstatus}" if $?.exitstatus>128 && $?.exitstatus<200
 
         unless @ssh_connected
           if (Time.now.to_i - start) < 60

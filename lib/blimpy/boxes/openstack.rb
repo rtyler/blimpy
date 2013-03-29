@@ -1,5 +1,6 @@
 require 'blimpy/box'
 require 'blimpy/boxes'
+require 'fog/openstack'
 
 module Blimpy::Boxes
   class OpenStack < Blimpy::Box

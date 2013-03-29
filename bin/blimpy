@@ -10,12 +10,8 @@ rescue NameError
   # I don't think we have YAML::ENGINE until Ruby 1.9
 end
 
-begin
-  require 'blimpy/cli'
-rescue LoadError
-  $:.unshift File.expand_path(File.dirname(__FILE__) + '/../lib/')
-  require 'blimpy/cli'
-end
+$:.unshift File.expand_path(File.dirname(__FILE__) + '/../lib/')
+require 'blimpy/cli'
 
 # allow monkey-patching of Blimpy by the project (mainly to add more commands)
 blimprc = File.join(Dir.pwd,"Blimprc")

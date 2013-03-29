@@ -1,5 +1,6 @@
 require 'blimpy/box'
 require 'blimpy/boxes'
+require 'fog/aws'
 
 module Blimpy::Boxes
   class AWS < Blimpy::Box

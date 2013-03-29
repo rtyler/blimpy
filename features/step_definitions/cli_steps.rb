@@ -34,6 +34,7 @@ end
 
 When /^I ssh into the machine$/ do
   step %{I run `blimpy start`}
+  step %{I run `blimpy wait_for_ssh`}
   step %{I run `blimpy ssh "Cucumber Host" -o StrictHostKeyChecking=no` interactively}
 end
 
