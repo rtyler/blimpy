@@ -210,6 +210,11 @@ module Blimpy
                   filename, "#{username}@#{dns}:#{directory}", *args)
     end
 
+    def scp_files(directory, files)
+      filename = File.expand_path(filename)
+      run_command(*['scp', '-o', 'StrictHostKeyChecking=no']+files+["#{username}@#{dns}:#{directory}"])
+    end
+
     def bootstrap_livery
       if @livery.kind_of? Symbol
         raise Blimpy::InvalidLiveryException, 'Symbol liveries are unsupported!'
