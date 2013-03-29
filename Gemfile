@@ -11,5 +11,5 @@ group :development do
   gem 'aruba'
   gem 'tempdir'
   gem 'pry'
-  gem 'debugger'
+  gem 'debugger' unless RUBY_VERSION =~ /1.8.+/
 end
