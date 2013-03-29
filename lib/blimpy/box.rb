@@ -241,7 +241,7 @@ module Blimpy
         # Run the `true` command and exit
         @ssh_connected = ssh_into('-q', 'true')
         # if SSH is killed (such as Ctrl+C), abort right away
-        raise Exception, "ssh was killed: #{$?.exitstatus}" if $?.exitstatus>128
+        raise Exception, "ssh was killed: #{$?.exitstatus}" if $?.exitstatus>128 && $?.exitstatus<200
 
         unless @ssh_connected
           if (Time.now.to_i - start) < 60
