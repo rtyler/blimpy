@@ -12,8 +12,7 @@ Feature: SSH into a named VM
         end
       end
       """
-    When I run `blimpy wait_for_ssh`
-    And I run `blimpy ssh Gherkins`
+    When I run `blimpy ssh Gherkins`
     Then the exit status should be 1
     And the output should contain:
       """
