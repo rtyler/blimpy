@@ -13,8 +13,7 @@ Feature: SCP a file into a named VM
       end
       """
     And I have a file named "hello.txt"
-    When I run `blimpy wait_for_ssh`
-    And I run `blimpy scp Gherkins hello.txt`
+    When I run `blimpy scp Gherkins hello.txt`
     Then the exit status should be 1
     And the output should contain:
       """
@@ -35,6 +34,5 @@ Feature: SCP a file into a named VM
       """
     And I have a file named "hello.txt"
     And I run `blimpy start`
-    When I run `blimpy wait_for_ssh`
-    And I run `blimpy scp "Cucumber Host" hello.txt`
+    When I run `blimpy scp "Cucumber Host" hello.txt`
     Then the exit status should be 0
