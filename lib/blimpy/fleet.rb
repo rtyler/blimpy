@@ -124,8 +124,10 @@ module Blimpy
         print "\n"
         puts ">> #{host.name} online at: #{host.dns}"
         host.online!
-        host.bootstrap
-        puts
+        if host.provision_on_start
+          host.bootstrap
+          puts
+        end
       end
 
       save!
