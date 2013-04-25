@@ -74,6 +74,32 @@ module Blimpy
       fleet.start
     end
 
+    desc 'show', 'Show blimp details for running blimps'
+    method_options :tags => :boolean
+    def show
+      ensure_blimpfile
+      blimps = current_blimps
+      unless blimps
+        puts 'No currently running VMs'
+        exit 0
+      end
+
+      tags_option = options[:tags]
+      blimps.each do |blimp, data|
+        if tags_option
+          tags = nil
+          data[:tags].each do |k,v|
+            if tags.nil?
+              tags = "#{k}=#{v}"
+            elsif
+              tags = "#{tags},#{k}=#{v}"
+            end
+          end
+          puts "#{data[:name]} #{data[:internal_dns]} #{tags}"
+        end
+      end
+    end
+
     desc 'status', 'Show running blimps'
     def status
       ensure_blimpfile
