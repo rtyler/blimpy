@@ -49,6 +49,7 @@ Here's an example Blimpfile:
             ship.username = 'ubuntu' # [Optional] SSH username, defaults to "ubuntu" for AWS machines
             ship.flavor = 'm1.small' # [Optional] defaults to t1.micro
             ship.tags = {:mytag => 'somevalue'} # [Optional]
+            ship.provision_on_start = false # [Optional] defaults to true
         end
     end
 ```
