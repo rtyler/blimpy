@@ -51,12 +51,14 @@ else
     Ubuntu) export PATH=/var/lib/gems/1.8/bin:/usr/local/bin:$PATH
             which puppet > /dev/null 2>&1
             if [ $? -ne 0 ]; then
+              # CODENAME is 'precise', 'oneiric', etc.
+              CODENAME=`lsb_release -c | awk '{print $2}'`
+              REPO_DEB="puppetlabs-release-${CODENAME}.deb"
+              wget --quiet http://apt.puppetlabs.com/${REPO_DEB} || Fatal "Could not retrieve http://apt.puppetlabs.com/${REPO_DEB}"
+              dpkg -i ${REPO_DEB} || Fatal "Could not install Puppet repo source '${REPO_DEB}'"
+              rm -f ${REPO_DEB}
               apt-get update
-              apt-get install -y ruby1.8 \
-                                 ruby1.8-dev \
-                                 libopenssl-ruby1.8 \
-                                 rubygems
-              gem install puppet --version "~> 2.7" --no-ri --no-rdoc
+              apt-get -qqy install puppet-common=2.7.* puppet=2.7.* hiera=1.1.* hiera-puppet=1.0* || Fatal "Could not install Puppet"
             fi
             ;;
     *) Fatal "Unsupported Linux flavor: $LINUXFLAVOR"

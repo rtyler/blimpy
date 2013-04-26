@@ -14,7 +14,7 @@ module Blimpy
     attr_accessor :image_id, :flavor, :group, :ports
     attr_accessor :dns, :internal_dns
     attr_accessor :name, :tags, :fleet_id, :username, :ssh_port, :livery
-
+    attr_accessor :provision_on_start
 
     def self.from_instance_id(an_id, data)
       return if data[:type].nil?
@@ -33,6 +33,7 @@ module Blimpy
     end
 
     def initialize(server=nil)
+      @provision_on_start = true
       @livery = nil
       @group = nil
       @name = 'Unnamed Box'
@@ -160,7 +161,6 @@ module Blimpy
         state == until_state
       end
     end
-
 
     def with_data(ship_id, data)
       data.each do |key, value|
