@@ -15,7 +15,8 @@ module Blimpy
     end
 
     def self.key_name
-      "Blimpy-#{ENV['USER']}-#{Socket.gethostname}"
+      safe_hostname = Socket.gethostname.gsub('.', '-')
+      "Blimpy-#{ENV['USER']}-#{safe_hostname}"
     end
   end
 end
