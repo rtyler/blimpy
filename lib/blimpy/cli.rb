@@ -52,17 +52,25 @@ module Blimpy
         end
         data
       end
+
+      def load_fleet
+        ensure_blimpfile
+        begin
+          return load_blimpfile
+        rescue Blimpy::InvalidBlimpFileError => e
+          puts "The Blimpfile is invalid!"
+          puts e.to_s
+          return nil
+        end
+      end
     end
 
     desc 'start', 'Start up a fleet of blimps'
     method_options :"dry-run" => :boolean
     def start
-      ensure_blimpfile
-      begin
-        fleet = load_blimpfile
-      rescue Blimpy::InvalidBlimpFileError => e
-        puts "The Blimpfile is invalid!"
-        puts e.to_s
+      fleet = load_fleet
+
+      if fleet.nil?
         exit 1
       end
 
@@ -72,6 +80,22 @@ module Blimpy
       end
 
       fleet.start
+    end
+
+    desc 'resume', 'Resume an existing fleet of instances'
+    def resume
+      fleet = load_fleet
+
+      if fleet.nil?
+        exit 1
+      end
+
+      if fleet.members.empty?
+        puts "No fleet running right now, perhaps you should `start` one."
+        exit 1
+      else
+        fleet.resume(fleet.members)
+      end
     end
 
     desc 'show', 'Show blimp details for running blimps'
