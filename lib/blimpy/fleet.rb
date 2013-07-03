@@ -1,6 +1,7 @@
 require 'blimpy/helpers/state'
 require 'blimpy/boxes/aws'
 require 'blimpy/boxes/openstack'
+require 'blimpy/boxes/existing'
 
 module Blimpy
   class Fleet
@@ -14,8 +15,10 @@ module Blimpy
       @airborn = false
     end
 
+    BOXES = { :aws => Blimpy::Boxes::AWS, :openstack => Blimpy::Boxes::OpenStack, :existing => Blimpy::Boxes::Existing }
+
     def valid_types
-      [:aws, :openstack]
+      BOXES.keys
     end
 
     def add(box_type, &block)
@@ -26,16 +29,12 @@ module Blimpy
         return false
       end
 
-      box = nil
-      if box_type == :aws
-        box = Blimpy::Boxes::AWS.new
-      end
-      if box_type == :openstack
-        box = Blimpy::Boxes::OpenStack.new
-      end
+      box = BOXES[box_type]
 
       if box.nil?
         return false
+      else
+        box = box.new()
       end
       box.fleet_id = @id
       @ships << box
