@@ -4,10 +4,12 @@ require 'fog/core/wait_for'
 require 'etc'
 
 module Blimpy::Boxes
-  # Fake box type for physical computer accessible through SSH
+    # Fake box type for physical computer accessible through SSH
   class Existing < Blimpy::Box
+    attr_accessor :host
+
     def self.fog_server_for_instance(id, blimpdata)
-      ExistingServer.new(id)
+      ExistingServer.new(id,blimpdata[:host])
     end
 
     def initialize(server=nil)
@@ -16,7 +18,7 @@ module Blimpy::Boxes
     end
 
     def validate!
-      if @name.nil?
+      if @host.nil?
         raise Blimpy::BoxValidationError, "Don't know which box to log into --- the host property is not set."
       end
     end
@@ -28,19 +30,20 @@ module Blimpy::Boxes
     private
 
     def create_host
-      ExistingServer.new(@name)
+      ExistingServer.new(@name,@host)
     end
   end
 
   class ExistingServer
-    def initialize(name)
+    def initialize(name,host)
       @name = name
+      @host = host
     end
     def dns_name
-      @name
+      @host
     end
     def private_dns_name
-      @name
+      @host
     end
     def id
       @name
