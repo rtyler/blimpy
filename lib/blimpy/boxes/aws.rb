@@ -46,7 +46,9 @@ module Blimpy::Boxes
     def import_key
       material = Blimpy::Keys.public_key
       begin
-        fog.import_key_pair(Blimpy::Keys.key_name, material)
+        if (fog.key_pairs.get(Blimpy::Keys.key_name).nil?) 
+          fog.import_key_pair(Blimpy::Keys.key_name, material)
+        end
       rescue Fog::Compute::AWS::Error => e
       end
     end
