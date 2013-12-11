@@ -198,10 +198,12 @@ module Blimpy
     end
 
     def ssh_commands(*args)
-      ['ssh', '-o', 'PasswordAuthentication=no',
-          '-o', 'StrictHostKeyChecking=no',
-          '-p', (ssh_port||22).to_s,
-          '-l', username, dns, *args]
+      cmds = ['ssh', '-o', 'PasswordAuthentication=no',
+          '-o', 'StrictHostKeyChecking=no' ]
+      if (ssh_port)
+        cmds += [-p, ssh_port.to_s]
+      end
+      cmds += ['-l', username, dns, *args]
     end
 
     def ssh_into(*args)
